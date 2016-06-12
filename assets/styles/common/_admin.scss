@@ -1,0 +1,27 @@
+body {
+  background-color: transparent;
+}
+
+.ng-scope table {
+
+  margin-top: 10px;
+  
+  thead,
+  tbody,
+  tfoot {
+    tr {
+      td,
+      th {
+        vertical-align: middle;
+      }
+    }
+  }
+}
+
+.st-sort-ascent:before {
+    content: '\25B2';
+}
+
+.st-sort-descent:before {
+    content: '\25BC';
+}
