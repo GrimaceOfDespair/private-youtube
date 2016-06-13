@@ -35,7 +35,8 @@ if (!defined('DIST_DIR')) {
 
 // 'production' or 'development' environment
 if (!defined('WP_ENV')) {
-  define('WP_ENV', 'production');
+//  define('WP_ENV', 'production');
+  define('WP_ENV', 'development');
 }
 
 require plugin_dir_path( __FILE__ ) . 'includes/class-privtube.php';

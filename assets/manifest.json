@@ -2,7 +2,10 @@
   "dependencies": {
     "admin.js": {
       "files": [
-        "app/privtube.module.js",
+        "app/common/common.js",
+        "app/common/*.js",
+        "app/admin/admin.js",
+        "app/admin/*.js",
         "app/*.js",
         "scripts/admin.js"
       ],
