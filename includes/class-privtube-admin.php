@@ -58,13 +58,23 @@ class PrivTube_Admin {
       
     $templatePath = WP_ENV === 'development' ? 'assets/' : 'dist/';
     $root_path = plugin_dir_path( dirname(__FILE__) ) . $root->path;
+    
+    $client_id = '';
+    $channel_id = '';
+    $options = get_option('privtube_options');
+    if ($options) {
+      $client_id = $options['client_id'];
+      $channel_id = $options['channel_id'];
+    }
 
     wp_localize_script( 'admin_js', 'configuration', array(
       'nonce' => wp_create_nonce( 'wp_rest' ),
       'locale' => get_locale(),
       'translations' => $this->get_translations(),
       'templateBaseUrl' => plugin_dir_url( dirname(__file__)) . $templatePath,
-      'version' => strval(filemtime( $root_path ))
+      'version' => strval(filemtime( $root_path )),
+      'clientId' => $client_id,
+      'channelId' => $channel_id
     ));
     
     wp_enqueue_script( 'admin_js');
@@ -72,6 +82,9 @@ class PrivTube_Admin {
     $culture = strtolower(str_replace('_', '-', get_locale()));
     wp_register_script( 'angular-locale', "https://code.angularjs.org/1.5.3/i18n/angular-locale_$culture.js" );
     wp_enqueue_script( 'angular-locale');
+    
+    wp_register_script( 'youtube-api', 'https://apis.google.com/js/client.js?onload=init' );
+    wp_enqueue_script( 'youtube-api');
   }
   
   public function menu() {

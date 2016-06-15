@@ -44,9 +44,10 @@ class PrivTube {
 
   private function load_dependencies() {
 
-    require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-privtube-loader.php';
-    require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-privtube-assets.php';
-    require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-privtube-admin.php';
+    $script_base = plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-privtube-';
+    foreach (array('loader', 'assets', 'admin', 'options') as $script) {
+      require_once $script_base . $script . '.php';
+    }
 
     $this->loader = new PrivTube_Loader();
   }
@@ -57,11 +58,18 @@ class PrivTube {
   }
 
   private function define_admin_hooks() {
+    
     $plugin_admin = new PrivTube_Admin( $this );
     $this->loader->add_action( 'admin_menu', $plugin_admin, 'menu' );
+    
+    $plugin_options = new PrivTube_Options( $this );
+    $this->loader->add_action( 'admin_menu', $plugin_options, 'menu' );
+    $this->loader->add_action( 'admin_init', $plugin_options, 'menu_init' );
+    
     $this->loader->add_action( 'wp_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
     $this->loader->add_action( 'wp_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
     $this->loader->add_action( 'rest_api_init', $plugin_public, 'enable_privtube' );
+    
   }
   
   public function run() {

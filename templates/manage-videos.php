@@ -3,8 +3,8 @@
   <h2><?php echo __('YouTube Videos', 'privtube') ?></h2>
   
   <ul class="nav nav-tabs">
-    <li role="presentation" class="active"><a ui-sref="manage-videos">Manage</a></li>
-    <li role="presentation"><a ui-sref="upload-video">Upload</a></li>
+    <li role="presentation" ui-sref-active="active" ><a ui-sref="manage-videos">Manage</a></li>
+    <li role="presentation" ui-sref-active="active" ><a ui-sref="upload-video">Upload</a></li>
   </ul> 
 
   <div class="container-fluid">
