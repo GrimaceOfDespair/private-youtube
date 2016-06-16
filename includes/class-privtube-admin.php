@@ -83,8 +83,11 @@ class PrivTube_Admin {
     wp_register_script( 'angular-locale', "https://code.angularjs.org/1.5.3/i18n/angular-locale_$culture.js" );
     wp_enqueue_script( 'angular-locale');
     
-    wp_register_script( 'youtube-api', 'https://apis.google.com/js/client.js?onload=init' );
+    wp_register_script( 'youtube-api', 'https://apis.google.com/js/client:plusone.js?onload=onLoadPlus', null, null, false );
     wp_enqueue_script( 'youtube-api');
+    
+    //wp_register_script( 'youtube-api', 'https://apis.google.com/js/client.js' );
+    //wp_enqueue_script( 'youtube-api');
   }
   
   public function menu() {

@@ -1,4 +1,4 @@
-<div ng-app="privtube.admin">
+<div id="privtube-admin" ng-app="privtube.admin">
 
   <h2><?php echo __('YouTube Videos', 'privtube') ?></h2>
   

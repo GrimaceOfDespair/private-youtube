@@ -21,7 +21,7 @@
             views: {
               'main': {
                 templateUrl: "admin/upload-video.html",
-                controller: "VideosController as videossCtrl"
+                controller: "VideosController as videosCtrl"
               }
             } 
           });

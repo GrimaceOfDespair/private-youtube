@@ -6,6 +6,8 @@
         "app/common/*.js",
         "app/admin/admin.js",
         "app/admin/*.js",
+        "app/youtube/youtube.js",
+        "app/youtube/*.js",
         "app/*.js",
         "scripts/admin.js"
       ],

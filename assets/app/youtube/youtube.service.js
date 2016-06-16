@@ -2,7 +2,7 @@
   'use strict';
   
   angular
-    .module('privtube.common')
+    .module('privtube.youtube')
     
     // Make sure rest requests are authorized and CSRF safe
     .service(['$http', '$q', 'configuration',
