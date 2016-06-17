@@ -109,3 +109,17 @@ textarea
     display: block;
   }
 }
+
+.container {
+  @include container-fixed;
+
+  @media (min-width: $screen-sm-min) {
+    width: $container-sm - 34 - 20;
+  }
+  @media (min-width: $screen-md-min) {
+    width: $container-md - 160 - 20;
+  }
+  @media (min-width: $screen-lg-min) {
+    width: $container-lg - 160 - 20;
+  }
+}

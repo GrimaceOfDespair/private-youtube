@@ -22,7 +22,7 @@ function onSignInSuccess() {
 
   <h2><?php echo __('YouTube Videos', 'privtube') ?></h2>
   
-  <div class="container" ng-if="!loggedIn">
+  <div id="login" class="container" ng-if="!loggedIn">
     <span class="g-signin2"
       data-onsuccess="onSignInSuccess"
       data-onfailure="onSignInFailure"
@@ -47,10 +47,12 @@ function onSignInSuccess() {
       <li role="presentation" ui-sref-active="active" ><a ui-sref="upload-video">Upload</a></li>
     </ul> 
 
-    <div class="container-fluid">
+    <div class="row">
         <div ui-view="main"></div>
-        <toaster-container></toaster-container>
     </div>
-
+    
   </div>
+  
+  <toaster-container></toaster-container>
+  
 </div>
