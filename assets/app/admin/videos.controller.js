@@ -7,7 +7,7 @@
   
   angular
     .module('privtube.admin')
-    .controller("VideosController", [
+    .controller('VideosController', [
 
       function videosController() {
         

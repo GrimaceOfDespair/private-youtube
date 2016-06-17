@@ -20,9 +20,10 @@ function onSignInSuccess() {
 </script>
 <div id="privtube-admin" ng-app="privtube.admin">
 
-  <h2><?php echo __('YouTube Videos', 'privtube') ?></h2>
+  <h2><?php echo __('YouTube Videos', 'privtube') ?>
+  </h2>
   
-  <div id="login" class="container" ng-if="!loggedIn">
+  <div id="login" class="container" ng-hide="loggedIn">
     <span class="g-signin2"
       data-onsuccess="onSignInSuccess"
       data-onfailure="onSignInFailure"
@@ -36,7 +37,6 @@ function onSignInSuccess() {
         'https://www.googleapis.com/auth/youtube'
       ], ' ');
       ?>">
-      Sign in
     </span>
   </div>
   

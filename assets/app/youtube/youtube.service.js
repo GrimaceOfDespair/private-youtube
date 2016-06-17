@@ -3,8 +3,6 @@
   
   angular
     .module('privtube.youtube')
-    
-    // Make sure rest requests are authorized and CSRF safe
     .service(['$http', '$q', 'configuration',
       function($http, $q, configuration) {
         var deferred = $q.defer();
