@@ -61,6 +61,7 @@ class PrivTube {
     
     $plugin_admin = new PrivTube_Admin( $this );
     $this->loader->add_action( 'admin_menu', $plugin_admin, 'menu' );
+    $this->loader->add_action( 'wp_print_scripts', $plugin_admin, 'google_signin' );
     
     $plugin_options = new PrivTube_Options( $this );
     $this->loader->add_action( 'admin_menu', $plugin_options, 'menu' );

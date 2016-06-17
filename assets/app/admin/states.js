@@ -4,7 +4,7 @@
     .config(['$stateProvider', '$urlRouterProvider',
       function ($stateProvider, $urlRouterProvider) {
         
-        //$urlRouterProvider.otherwise('manage');
+        $urlRouterProvider.otherwise('manage-videos');
 
         $stateProvider
           .state('manage-videos', {

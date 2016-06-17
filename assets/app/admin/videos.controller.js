@@ -11,6 +11,12 @@
 
       function videosController() {
         
+        // $scope.loggedIn = false;
+          
+        // $scope.$on('event:google-plus-signin', function (event, authResult) {
+          // $scope.loggedIn = true;
+        // });
+
         // $window.initGapi = function() {
           // $scope.$apply($scope.getChannel);
         // };

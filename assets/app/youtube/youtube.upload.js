@@ -1,11 +1,3 @@
-function onLoadPlus() {
-  angular
-    .element('#privtube-admin')
-    .injector()
-    .get('$rootScope')
-    .$broadcast('event:google-plus-loaded');
-}
-
 angular.module('privtube.youtube')
   .run(['$window', '$rootScope', function ($window, $rootScope) {
 
@@ -136,10 +128,6 @@ angular.module('privtube.youtube')
           };
         });
 
-        $scope.$on('event:google-plus-loaded', function (event, authResult) {
-          $window.gapi.signin.render('signInButton', defaults);
-        });
-
         $scope.$on('event:google-plus-signin-success', function (event, authResult) {
           $scope.$apply(function() {
             if (authResult.access_token) {
@@ -185,7 +173,7 @@ angular.module('privtube.youtube')
             uploadFile();
           }
         };
-
+        
         function loadChannels() {
           $window.gapi.client.request({
             path: '/youtube/v3/channels',

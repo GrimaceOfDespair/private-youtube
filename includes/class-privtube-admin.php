@@ -14,6 +14,10 @@ class PrivTube_Admin {
 
   protected $assets;
   
+  protected $yt_client_id = '';
+  
+  protected $yt_channel_id = '';
+  
   protected $translations = array(
     'privtube' => array(
     ),
@@ -24,7 +28,12 @@ class PrivTube_Admin {
     $this->version = $module->get_version();
     $this->assets = $module->get_assets();
     $this->plugin_name = $module->get_plugin_name();
-
+    
+    $options = get_option('privtube_options');
+    if ($options) {
+      $this->yt_client_id = $options['client_id'];
+      $this->yt_channel_id = $options['channel_id'];
+    }
   }
 
   public function __($text) {
@@ -59,22 +68,14 @@ class PrivTube_Admin {
     $templatePath = WP_ENV === 'development' ? 'assets/' : 'dist/';
     $root_path = plugin_dir_path( dirname(__FILE__) ) . $root->path;
     
-    $client_id = '';
-    $channel_id = '';
-    $options = get_option('privtube_options');
-    if ($options) {
-      $client_id = $options['client_id'];
-      $channel_id = $options['channel_id'];
-    }
-
     wp_localize_script( 'admin_js', 'configuration', array(
       'nonce' => wp_create_nonce( 'wp_rest' ),
       'locale' => get_locale(),
       'translations' => $this->get_translations(),
       'templateBaseUrl' => plugin_dir_url( dirname(__file__)) . $templatePath,
       'version' => strval(filemtime( $root_path )),
-      'clientId' => $client_id,
-      'channelId' => $channel_id
+      'clientId' => $this->yt_client_id,
+      'channelId' => $this->yt_channel_id
     ));
     
     wp_enqueue_script( 'admin_js');
@@ -88,6 +89,12 @@ class PrivTube_Admin {
     
     //wp_register_script( 'youtube-api', 'https://apis.google.com/js/client.js' );
     //wp_enqueue_script( 'youtube-api');
+  }
+  
+  public function google_signin() {
+    if ($this->yt_client_id) {
+      echo '<meta name="google-signin-client_id" content="' . $this->yt_client_id . '">';
+    }
   }
   
   public function menu() {

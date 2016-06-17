@@ -1,10 +1,4 @@
-<div class="container" ng-if="!loggedIn">
-  <span id="signInButton">
-    Sign in
-  </span>
-</div>
-
-<div class="container" ng-if="loggedIn">
+<div class="container">
   <div class="row">
     <div class ='col-md-12'>
       <div class="form-group drop-box""
@@ -34,7 +28,7 @@
     </div>
     <button type="button" id="uploadButton" class="btn btn-success"
       ng-disabled="video == null || uploading"
-      ng-click="upload"
+      ng-click="upload()"
       ><span class="glyphicon glyphicon-upload"></span> Upload Video</button>
   </div>
 
