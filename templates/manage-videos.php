@@ -5,8 +5,10 @@
   }
 ?>
 <script>
-function onSignInSuccess() {
+function onSignInSuccess(authResult) {
 
+  window.access_token = authResult.hg.access_token;
+  
   // Warning: ugly hack ahead  
   var scope = angular
     .element('#privtube-admin')

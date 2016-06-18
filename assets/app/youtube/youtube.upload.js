@@ -3,8 +3,10 @@
   
   angular
     .module('privtube.youtube')
-    .directive('youtubeUpload', ['$window', '$alert', function ($window, $alert) {
-      'use strict';
+    .directive('youtubeUpload', [
+    
+      '$window', '$alert', '$timeout', 'accessToken',
+      function ($window, $alert, $timeout, accessToken) {
 
       return {
         restrict: 'AE',
@@ -16,14 +18,8 @@
         link: function ($scope, $element, $attrs) {
 
           var STATUS_POLLING_INTERVAL_MILLIS = 10 * 1000; // One minute.
-          var ending = /\.apps\.googleusercontent\.com$/;
           var categoryId = 22;
           var tags = ['youtube-cors-upload'];
-
-          $attrs.clientid += (ending.test($attrs.clientid) ? '' : '.apps.googleusercontent.com');
-
-          $attrs.$set('data-clientid', $attrs.clientid);
-          $attrs.$set('theme', $attrs.theme);
 
           var status = {
             init: 10,
@@ -33,71 +29,17 @@
             error: 50
           };
 
-          var setStatus = function (newStatus, params) {
-            $scope.status = newStatus;
-            switch ($scope.status) {
-              case status.init:
-                break;
-              case status.uploading:
-                $scope.$emit('event:youtube-video-uploading');
-                $scope.uploading = true;
-                break;
-              case status.processing:
-                $scope.$emit('event:youtube-video-uploaded', params[0]);
-                $scope.uploading = false;
-                break;
-              case status.final:
-                $scope.$emit('event:youtube-video-processed', params[0]);
-                $scope.uploading = false;
-                break;
-              case status.error:
-                $scope.$emit('event:youtube-video-failed', params[0]);
-                $scope.uploading = false;
-                break;
-            }
-          };
-
-          setStatus(status.init);
-
-          // Some default values, based on prior versions of this directive
-          var defaults = {
-            callback: 'signinCallback',
-            cookiepolicy: 'single_host_origin',
-            requestvisibleactions: 'http://schemas.google.com/AddActivity',
-            scope: [
-              'https://www.googleapis.com/auth/plus.login',
-              'https://www.googleapis.com/auth/userinfo.email',
-              'https://www.googleapis.com/auth/youtube.upload',
-              'https://www.googleapis.com/auth/youtube'
-            ].join(' '),
-            height: 'standard',
-            width: 'wide',
-            state: '',
-            showprivacy: false,
-            videoTitle: "Upload a Video",
-            clientid: "YOUR CLIENT ID HERE"
-          };
-
-          defaults.clientid = $attrs.clientid;
-          defaults.theme = $attrs.theme;
-
-          // Overwrite default values if explicitly set
-          angular.forEach(Object.getOwnPropertyNames(defaults), function (propName) {
-            if ($attrs.hasOwnProperty(propName)) {
-                defaults[propName] = $attrs[propName];
-            }
-          });
-
           $scope.loggedIn = false;
           $scope.uploading = false;
           $scope.uploadProgressText = '';
-          
           $scope.video = {
             file: null,
             name: '',
             id: null,
             uploadProgress: 0,
           };
+
+          setStatus(status.init);
 
           $scope.$watch('videoFiles', function (files) {
             if (files && files.length > 0) {
@@ -106,9 +48,9 @@
           });
 
           $scope.$watch('video.file', function (file) {
-              if (file) {
-                $scope.video.name = file.name;
-              }
+            if (file) {
+              $scope.video.name = file.name;
+            }
           });
 
           // Default language
@@ -117,16 +59,6 @@
             $window.___gcfg = {
               lang: value ? value : 'en'
             };
-          });
-
-          $scope.$on('event:google-plus-signin-success', function (event, authResult) {
-            $scope.$apply(function() {
-              if (authResult.access_token) {
-                $scope.loggedIn = true;
-                $scope.accessToken = authResult.access_token;
-                loadChannels();
-              }
-            });
           });
 
           $scope.upload = function () {
@@ -165,20 +97,29 @@
             }
           };
           
-          function loadChannels() {
-            $window.gapi.client.request({
-              path: '/youtube/v3/channels',
-              params: {
-                part: 'snippet',
-                mine: true
-              },
-              callback: function (response) {
-                if (response.error) {
-                  $alert(response.error.message);
-                }
-              }
-            });
-          }
+          function setStatus(newStatus, params) {
+            $scope.status = newStatus;
+            switch ($scope.status) {
+              case status.init:
+                break;
+              case status.uploading:
+                $scope.$emit('event:youtube-video-uploading');
+                $scope.uploading = true;
+                break;
+              case status.processing:
+                $scope.$emit('event:youtube-video-uploaded', params[0]);
+                $scope.uploading = false;
+                break;
+              case status.final:
+                $scope.$emit('event:youtube-video-processed', params[0]);
+                $scope.uploading = false;
+                break;
+              case status.error:
+                $scope.$emit('event:youtube-video-failed', params[0]);
+                $scope.uploading = false;
+                break;
+            }
+          };
 
           /**
            * Uploads a video file to YouTube.
@@ -206,7 +147,7 @@
             var uploader = new MediaUploader({
               baseUrl: 'https://www.googleapis.com/upload/youtube/v3/videos',
               file: $scope.video.file,
-              token: $scope.accessToken,
+              token: accessToken,
               metadata: metadata,
               params: {
                   part: Object.keys(metadata).join(',')
