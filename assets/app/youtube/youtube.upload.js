@@ -205,7 +205,7 @@
             
             var uploader = new MediaUploader({
               baseUrl: 'https://www.googleapis.com/upload/youtube/v3/videos',
-              file: $scope.videoFile,
+              file: $scope.video.file,
               token: $scope.accessToken,
               metadata: metadata,
               params: {

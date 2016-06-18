@@ -1,1 +1,14 @@
-<h3>All video's</h3>
+<h3>Video channel {{title}}</h3>
+<ul>
+  <li class="col-md-3" ng-repeat="video in videos">
+    <a href="https://www.youtube.com/watch?v={{video.id}}?rel=0" target="_blank">
+      <figure>
+        <img ng-src="{{video.thumbnail}}" />
+        <figcaption>
+          <h4 ng-bind="video.title"></h4>
+          <h5 ng-bind="video.publishedAt"></h5>
+        </figcaption>
+      </figure>
+    </a>
+  </li>
+</ul>

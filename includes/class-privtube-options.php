@@ -72,6 +72,14 @@ class PrivTube_Options {
     );      
 
     add_settings_field(
+      'client_secret', 
+      _('Client Secret'), 
+      array( $this, 'client_secret_callback' ), 
+      'privtube-setting-admin', 
+      'privtube_settings'
+    );      
+
+    add_settings_field(
       'channel_id', 
       _('Channel ID'), 
       array( $this, 'channel_id_callback' ), 
@@ -86,6 +94,9 @@ class PrivTube_Options {
 
     if( isset( $input['client_id'] ) )
       $new_input['client_id'] = sanitize_text_field( $input['client_id'] );
+
+    if( isset( $input['client_secret'] ) )
+      $new_input['client_secret'] = sanitize_text_field( $input['client_secret'] );
 
     if( isset( $input['channel_id'] ) )
       $new_input['channel_id'] = sanitize_text_field( $input['channel_id'] );
@@ -105,6 +116,14 @@ class PrivTube_Options {
     $client_id = isset( $this->options['client_id'] ) ? esc_attr( $this->options['client_id']) : '';
     ?>
       <input class="regular-text" type="text" id="client_id" length="" name="privtube_options[client_id]" value="<?= $client_id ?>" />
+    <?php
+  }
+
+  public function client_secret_callback()
+  {
+    $client_secret = isset( $this->options['client_secret'] ) ? esc_attr( $this->options['client_secret']) : '';
+    ?>
+      <input class="regular-text" type="text" id="client_secret" length="" name="privtube_options[client_secret]" value="<?= $client_secret ?>" />
     <?php
   }
 

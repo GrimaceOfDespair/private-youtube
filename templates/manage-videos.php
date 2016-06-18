@@ -20,6 +20,8 @@ function onSignInSuccess() {
 </script>
 <div id="privtube-admin" ng-app="privtube.admin">
 
+  <toaster-container></toaster-container>
+  
   <h2><?php echo __('YouTube Videos', 'privtube') ?>
   </h2>
   
@@ -52,7 +54,5 @@ function onSignInSuccess() {
     </div>
     
   </div>
-  
-  <toaster-container></toaster-container>
   
 </div>

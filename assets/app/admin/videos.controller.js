@@ -8,27 +8,40 @@
   angular
     .module('privtube.admin')
     .controller('VideosController', [
-
-      function videosController() {
+    
+      '$scope', 'gapiClient', 'configuration',
+      function($scope, gapiClient, configuration) {
         
-        // $scope.loggedIn = false;
+        gapiClient
+          .loadChannel(configuration.channelId)
+          .then(function(result) {
           
-        // $scope.$on('event:google-plus-signin', function (event, authResult) {
-          // $scope.loggedIn = true;
-        // });
-
-        // $window.initGapi = function() {
-          // $scope.$apply($scope.getChannel);
-        // };
-
-        // $scope.getChannel = function () {
-          // googleService.googleApiClientReady().then(function (data) {
-            // $scope.channel = data;
-          // }, function (error) {
-            // console.log('Failed: ' + error);
-          // });
-        // };
-        
+            var videos = [];
+            var items = result.items;
+            
+            for (var i = 0; i < items.length; i++) {
+              
+              var item = items[i].snippet;
+              var id = items[i].id;
+              switch (id.kind)
+              {
+                case 'youtube#channel':
+                  $scope.title = item.title;
+                  break;
+                  
+                case 'youtube#video':
+                  videos.push({
+                    id: id.videoId,
+                    title: item.title,
+                    publishedAd: item.publishedAt,
+                    thumbnail: item.thumbnails.medium.url
+                  });
+                  break;
+              }
+            }
+            
+            $scope.videos = videos;
+          });
       }
     ]);
 })();

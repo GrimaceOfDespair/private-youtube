@@ -15,7 +15,8 @@ function onSignIn(success) {
   
   angular
     .module('privtube.admin', [
-      'ui.router.state',
+      'ui.router',
+      //'ui.router.state',
       'privtube.common',
       'privtube.youtube',
       'privtube.configuration',
