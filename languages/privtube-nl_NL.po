@@ -1,0 +1,97 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Private YouTube\n"
+"POT-Creation-Date: 2016-06-19 22:54+0200\n"
+"PO-Revision-Date: 2016-06-19 22:54+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: nl_NL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.8.7\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-WPHeader: privtube.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: includes/class-privtube-admin.php:128
+msgid "All videos"
+msgstr "Alle video's"
+
+#: includes/class-privtube-admin.php:129
+msgid "New video"
+msgstr "Nieuwe video"
+
+#: includes/class-privtube-admin.php:140 templates/new-video.php:27
+msgid "YouTube Videos"
+msgstr "YouTube-video's"
+
+#: includes/class-privtube-admin.php:153
+msgid "Upload Video"
+msgstr "Upload video"
+
+#: includes/class-privtube-admin.php:168
+msgid "The session state did not match."
+msgstr "Sessie komt niet overeen."
+
+#: includes/class-privtube-admin.php:213
+msgid "Service error:"
+msgstr "Servicefout:"
+
+#: includes/class-privtube-admin.php:220
+msgid "Client error:"
+msgstr "Clientfout:"
+
+#: includes/class-privtube-admin.php:238
+msgid "Authorization Required:"
+msgstr "Authorisatie vereist:"
+
+#: includes/class-privtube-admin.php:239
+#, php-format
+msgid "<a href=\"%s\">Authorize</a> before proceeding."
+msgstr "<a href=\"%s\">Autoriseer</a> om verder te gaan."
+
+#: includes/class-privtube-options.php:27
+#: includes/class-privtube-options.php:36
+#: includes/class-privtube-options.php:61
+msgid "Private YouTube Settings"
+msgstr "Instellingen Private YouTube"
+
+#: includes/class-privtube-options.php:68
+msgid "Client ID"
+msgstr "Client Id"
+
+#: includes/class-privtube-options.php:76
+msgid "Client Secret"
+msgstr "Geheime sleutel"
+
+#: includes/class-privtube-options.php:84
+msgid "Channel ID"
+msgstr "Kanaal-id"
+
+#: templates/all-videos.php:19
+msgid "No videos found"
+msgstr "Geen video's gevonden"
+
+#. Plugin Name of the plugin/theme
+msgid "Private YouTube"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+#. Author URI of the plugin/theme
+msgid "http://www.bithive.be/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Manager your private YouTube channel with WordPress"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "BitHive"
+msgstr ""

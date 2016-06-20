@@ -136,7 +136,7 @@
                 categoryId: categoryId
               },
               status: {
-                privacyStatus: "public",
+                privacyStatus: "unlisted", // private, public, unlisted
                 embeddable: true
               }
             };
@@ -162,7 +162,12 @@
                   var errorResponse = JSON.parse(data);
                   message = errorResponse.error.message;
                 } finally {
-                  $alert(message);
+                  $alert({
+                    content: message
+                    placement: 'top-right',
+                    type: 'warning',
+                    duration: 3
+                  });
                 }
               },
               onProgress: function (data) {
@@ -197,7 +202,12 @@
               callback: function (response) {
                 if (response.error) {
                   // The status polling failed.
-                  console.log(response.error.message);
+                  $alert({
+                    content: response.error.message
+                    placement: 'top-right',
+                    type: 'warning',
+                    duration: 3
+                  });
                   $timeout(function() {
                     pollForVideoStatus();
                   }, STATUS_POLLING_INTERVAL_MILLIS);

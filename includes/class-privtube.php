@@ -53,7 +53,7 @@ class PrivTube {
   }
 
   private function define_common_hooks() {
-    $this->loader->add_action( 'init', $this, 'load_text_domain' );
+    $this->loader->add_action( 'plugins_loaded', $this, 'load_text_domain' );
     $this->loader->add_action( 'activated_plugin', $this, 'fix_plugin_dependencies' );
   }
 
@@ -67,6 +67,7 @@ class PrivTube {
     $this->loader->add_action( 'admin_menu', $plugin_options, 'menu' );
     $this->loader->add_action( 'admin_init', $plugin_options, 'menu_init' );
     
+    $this->loader->add_action( 'admin_init', $plugin_admin, 'google_init' );
     $this->loader->add_action( 'wp_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
     $this->loader->add_action( 'wp_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
     $this->loader->add_action( 'rest_api_init', $plugin_public, 'enable_privtube' );
@@ -104,8 +105,8 @@ class PrivTube {
   }
   
   public function load_text_domain() {
-    
-    load_plugin_textdomain( $this->plugin_name, false, $this->domain . '/languages' );
+
+    load_plugin_textdomain( $this->plugin_name, false, 'private-youtube/languages' );
     
   }
 }
