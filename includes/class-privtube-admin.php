@@ -13,15 +13,7 @@ class PrivTube_Admin {
 
   protected $assets;
   
-  protected $yt_client_id = '';
-  
-  protected $yt_client_secret = '';
-  
-  protected $yt_channel_id = '';
-  
-  protected $google_client = null;
-  
-  protected $google_api_error = null;
+  protected $google;
   
   protected $translations = array(
     'privtube' => array(
@@ -33,33 +25,13 @@ class PrivTube_Admin {
     $this->version = $module->get_version();
     $this->assets = $module->get_assets();
     $this->plugin_name = $module->get_plugin_name();
+    $this->google = $module->get_google();
     
-    $options = get_option('privtube_options');
-    if ($options) {
-      $this->yt_client_id = $options['client_id'];
-      $this->yt_client_secret = $options['client_secret'];
-      $this->yt_channel_id = $options['channel_id'];
-
-      $this->google_client = $this->createGoogleClient();
-    }
+    add_action( 'admin_menu', [$this, 'menu'] );
+    //add_action( 'wp_enqueue_scripts', [$this, 'enqueue_styles'] );
+    //add_action( 'wp_enqueue_scripts', [$this, 'enqueue_scripts'] );
   }
   
-  public function createGoogleClient() {
-    
-    set_include_path(dirname(__FILE__)."/../");
-    require_once 'vendor/autoload.php';
-    
-    $client = new Google_Client();
-    $client->setClientId($this->yt_client_id);
-    $client->setClientSecret($this->yt_client_secret);
-    $client->setScopes('https://www.googleapis.com/auth/youtube');
-    $redirect = admin_url('admin.php?page=privtube-all-videos');
-    $client->setRedirectUri($redirect);
-    $client->setAccessType('offline');
-    
-    return $client;
-  }
-
   public function __($text) {
     
     return __($text, $this->plugin_name);
@@ -98,8 +70,7 @@ class PrivTube_Admin {
       'translations' => $this->get_translations(),
       'templateBaseUrl' => plugin_dir_url( dirname(__file__)) . $templatePath,
       'version' => strval(filemtime( $root_path )),
-      'clientId' => $this->yt_client_id,
-      'channelId' => $this->yt_channel_id
+      'clientId' => $this->google->get_client_id(),
     ));
     
     wp_enqueue_script( 'admin_js');
@@ -107,18 +78,6 @@ class PrivTube_Admin {
     $culture = strtolower(str_replace('_', '-', get_locale()));
     wp_register_script( 'angular-locale', "https://code.angularjs.org/1.5.3/i18n/angular-locale_$culture.js" );
     wp_enqueue_script( 'angular-locale');
-    
-    wp_register_script( 'youtube-api', 'https://apis.google.com/js/client:plusone.js?onload=onLoadPlus', null, null, false );
-    wp_enqueue_script( 'youtube-api');
-    
-    //wp_register_script( 'youtube-api', 'https://apis.google.com/js/client.js' );
-    //wp_enqueue_script( 'youtube-api');
-  }
-  
-  public function google_signin() {
-    if ($this->yt_client_id) {
-      echo '<meta name="google-signin-client_id" content="' . $this->yt_client_id . '">';
-    }
   }
   
   public function menu() {
@@ -143,11 +102,13 @@ class PrivTube_Admin {
     <div class="container">
       <?php if ($this->google_api_error): ?>
         <div class="alert alert-danger" role="alert">
-          <strong><?= $this->google_api_error['type'] ?></strong>
-          <?= $this->google_api_error['message'] ?>
+          <strong><?= $this->google_api_error['type'] ?></strong><br />
+          <code><?= $this->google_api_error['message'] ?></code><br />
           <br />
-          <br />
-          <?= sprintf(__('<a href="%s">Retry</a> authentication?', 'privtube'), $this->create_auth_url()) ?> 
+          <?=
+            sprintf(__('Click <a href="%s">here</a> to reconfigure YouTube access', 'privtube'),
+              admin_url('options-general.php?page=privtube-setting-admin'));
+          ?> 
         </div>
       <?php else:
         include( dirname(dirname( __FILE__ )) . '/templates/all-videos.php' );
@@ -167,63 +128,13 @@ class PrivTube_Admin {
     <?php
   }
   
-  public function google_init() {
-    
-    $client = $this->google_client;
-    
-    if (isset($_GET['code'])) {
-      $state = get_transient('_google_state_'. get_current_user_id());
-      if ($state === strval($_GET['state'])) {
-        
-        $client->authenticate($_GET['code']);
-        $this->set_token($client->getAccessToken());
-        
-        $redirect = admin_url('admin.php?page=privtube-all-videos');
-        header('Location: ' . $redirect);
-      }
-      
-    } else {
-      
-      $token = $this->get_token();
-      if ($token) {
-        $client->setAccessToken($token);
-      }
-    }
-
-    $access_token = $client->getAccessToken();
-    if ($access_token) {
-      
-      $this->set_token($access_token);
-      
-    } else {
-      
-      $authUrl = $this->create_auth_url();
-      
-      $this->google_api_error = array(
-        type => __('Authorization Required:', 'privtube'),
-        message => sprintf(__('<a href="%s">Authorize</a> before proceeding.', 'privtube'), $authUrl)
-      );
-    }  
-  }
-
-  public function create_auth_url() {
-    
-      $state = mt_rand();
-      $this->google_client->setState($state);
-      set_transient('_google_state_'. get_current_user_id(), $state);
-
-      return $this->google_client->createAuthUrl();
-  }
-  
   public function prepare_videos() {
-    
-    $client = $this->google_client;
     
     // Check to ensure that the access token was successfully acquired.
     try {
       // Call the channels.list method to retrieve information about the
       // currently authenticated user's channel.
-      $youtube = new Google_Service_YouTube($client);
+      $youtube = $this->google->create_youtube_client();
       
       $channelsResponse = $youtube->channels->listChannels('contentDetails', array(
         'mine' => 'true',
@@ -263,12 +174,12 @@ class PrivTube_Admin {
       
     } catch (Google_Service_Exception $e) {
       $this->google_api_error = array(
-        type => __('Service error:', 'privtube'),
+        type => __('Service error', 'privtube'),
         message => $e->getMessage()
       );
     } catch (Google_Exception $e) {
       $this->google_api_error = array(
-        type => __('Client error:', 'privtube'),
+        type => __('Client error', 'privtube'),
         message => $e->getMessage()
       );
     }
@@ -313,11 +224,4 @@ class PrivTube_Admin {
     return $files;
   }
   
-  private function get_token() {
-    return get_transient('_privtube_token');
-  }
-  
-  private function set_token($token) {
-    return set_transient('_privtube_token', $token);
-  }
 }

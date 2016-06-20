@@ -14,27 +14,46 @@ class PrivTube_Options {
 
   protected $assets;
   
+  protected $google;
+  
   public function __construct( $module ) {
 
     $this->version = $module->get_version();
     $this->assets = $module->get_assets();
     $this->plugin_name = $module->get_plugin_name();
+    $this->google = $module->get_google();
 
+    add_action( 'admin_menu', [$this, 'menu'] );
+    add_action( 'admin_init', [$this, 'menu_init'] );
   }
   
   public function menu() {
     
-    add_options_page('Settings Admin', _('Private YouTube Settings'), 'manage_options', 'privtube-setting-admin', [&$this, 'manage_options'] );
+    $options_page = add_options_page('Settings Admin', _('Private YouTube Settings'), 'manage_options', 'privtube-setting-admin', [&$this, 'manage_options'] );
+    
+    add_action( 'load-' . $options_page, array( $this, 'enqueue_styles' ) );
     
   }
   
+  public function enqueue_styles() {
+
+    wp_enqueue_style( 'admin_css', $this->assets->get_path('styles/admin.css'), array(), $this->version, 'all' );
+
+  }
+
   public function manage_options() {
     // Set class property
     $this->options = get_option( 'privtube_options' );
     ?>
-    <div class="wrap">
+    <div class="container">
         <h2><?php _('Private YouTube Settings') ?></h2>           
-        <form method="post" action="options.php">
+        <?php if (!$this->google->is_authenticated()): ?>
+        <div class="alert alert-danger" role="alert">
+          <strong><?= __('Not authenticated') ?></strong>:
+          <?= sprintf(__('<a href="%s">Authorize</a> before proceeding.', 'privtube'), $this->google->get_auth_url()) ?> 
+        </div>
+        <?php endif; ?>
+        <form method="post" action="options.php" role="form">
         <?php
             settings_fields( 'privtube_option_group' );   
             do_settings_sections( 'privtube-setting-admin' );
@@ -78,14 +97,6 @@ class PrivTube_Options {
       'privtube-setting-admin', 
       'privtube_settings'
     );      
-
-    add_settings_field(
-      'channel_id', 
-      _('Channel ID'), 
-      array( $this, 'channel_id_callback' ), 
-      'privtube-setting-admin', 
-      'privtube_settings'
-    );      
   }
   
   public function sanitize( $input )
@@ -97,9 +108,6 @@ class PrivTube_Options {
 
     if( isset( $input['client_secret'] ) )
       $new_input['client_secret'] = sanitize_text_field( $input['client_secret'] );
-
-    if( isset( $input['channel_id'] ) )
-      $new_input['channel_id'] = sanitize_text_field( $input['channel_id'] );
 
     return $new_input;
   }
@@ -115,7 +123,9 @@ class PrivTube_Options {
   {
     $client_id = isset( $this->options['client_id'] ) ? esc_attr( $this->options['client_id']) : '';
     ?>
-      <input class="regular-text" type="text" id="client_id" length="" name="privtube_options[client_id]" value="<?= $client_id ?>" />
+      <div class="form-group">
+        <input class="form-control" type="text" id="client_id" length="" name="privtube_options[client_id]" value="<?= $client_id ?>" />
+      </div>
     <?php
   }
 
@@ -123,15 +133,9 @@ class PrivTube_Options {
   {
     $client_secret = isset( $this->options['client_secret'] ) ? esc_attr( $this->options['client_secret']) : '';
     ?>
-      <input class="regular-text" type="text" id="client_secret" length="" name="privtube_options[client_secret]" value="<?= $client_secret ?>" />
-    <?php
-  }
-
-  public function channel_id_callback()
-  {
-    $channel_id = isset( $this->options['channel_id'] ) ? esc_attr( $this->options['channel_id']) : '';
-    ?>
-      <input class="regular-text" type="text" id="channel_id" length="" name="privtube_options[channel_id]" value="<?= $channel_id ?>" />
+      <div class="form-group">
+        <input class="form-control" type="text" id="client_secret" length="" name="privtube_options[client_secret]" value="<?= $client_secret ?>" />
+      </div>
     <?php
   }
 }

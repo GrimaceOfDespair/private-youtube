@@ -119,7 +119,7 @@
                 $scope.uploading = false;
                 break;
             }
-          };
+          }
 
           /**
            * Uploads a video file to YouTube.
@@ -163,7 +163,7 @@
                   message = errorResponse.error.message;
                 } finally {
                   $alert({
-                    content: message
+                    content: message,
                     placement: 'top-right',
                     type: 'warning',
                     duration: 3
@@ -203,7 +203,7 @@
                 if (response.error) {
                   // The status polling failed.
                   $alert({
-                    content: response.error.message
+                    content: response.error.message,
                     placement: 'top-right',
                     type: 'warning',
                     duration: 3

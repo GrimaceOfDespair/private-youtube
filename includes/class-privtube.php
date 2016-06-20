@@ -42,10 +42,16 @@ class PrivTube {
     
   }
 
+  public function get_google() {
+    
+    return $this->google;
+    
+  }
+  
   private function load_dependencies() {
 
     $script_base = plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-privtube-';
-    foreach (array('loader', 'assets', 'admin', 'options') as $script) {
+    foreach (array('loader', 'assets', 'admin', 'options', 'google') as $script) {
       require_once $script_base . $script . '.php';
     }
 
@@ -53,6 +59,9 @@ class PrivTube {
   }
 
   private function define_common_hooks() {
+    
+    $this->google = new PrivTube_Google();
+    
     $this->loader->add_action( 'plugins_loaded', $this, 'load_text_domain' );
     $this->loader->add_action( 'activated_plugin', $this, 'fix_plugin_dependencies' );
   }
@@ -60,16 +69,9 @@ class PrivTube {
   private function define_admin_hooks() {
     
     $plugin_admin = new PrivTube_Admin( $this );
-    $this->loader->add_action( 'admin_menu', $plugin_admin, 'menu' );
-    $this->loader->add_action( 'wp_print_scripts', $plugin_admin, 'google_signin' );
     
     $plugin_options = new PrivTube_Options( $this );
-    $this->loader->add_action( 'admin_menu', $plugin_options, 'menu' );
-    $this->loader->add_action( 'admin_init', $plugin_options, 'menu_init' );
     
-    $this->loader->add_action( 'admin_init', $plugin_admin, 'google_init' );
-    $this->loader->add_action( 'wp_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-    $this->loader->add_action( 'wp_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
     $this->loader->add_action( 'rest_api_init', $plugin_public, 'enable_privtube' );
     
   }
