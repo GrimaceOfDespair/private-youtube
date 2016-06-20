@@ -40,3 +40,5 @@ cache
 bower_components
 node_modules
 dist
+*.mo
+/vendor

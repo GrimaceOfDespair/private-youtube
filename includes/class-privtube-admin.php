@@ -251,7 +251,7 @@ class PrivTube_Admin {
           $videos []= array(
             id => $video_id,
             title => $snippet['title'],
-            publishedAt => $snippet['publishedAt'],
+            publishedAt => mysql2date( get_option('date_format'), $snippet['publishedAt']),
             thumbnail => $snippet['thumbnails']['default']['url'],
             url => 'https://www.youtube.com/watch?v=' . $video_id . '?rel=0',
             status => $playlistItem['status']['privacyStatus']
