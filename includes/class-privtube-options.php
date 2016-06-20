@@ -47,12 +47,6 @@ class PrivTube_Options {
     ?>
     <div class="container">
         <h2><?php _('Private YouTube Settings') ?></h2>           
-        <?php if (!$this->google->is_authenticated()): ?>
-        <div class="alert alert-danger" role="alert">
-          <strong><?= __('Not authenticated') ?></strong>:
-          <?= sprintf(__('<a href="%s">Authorize</a> before proceeding.', 'privtube'), $this->google->get_auth_url()) ?> 
-        </div>
-        <?php endif; ?>
         <form method="post" action="options.php" role="form">
         <?php
             settings_fields( 'privtube_option_group' );   
@@ -108,6 +102,8 @@ class PrivTube_Options {
 
     if( isset( $input['client_secret'] ) )
       $new_input['client_secret'] = sanitize_text_field( $input['client_secret'] );
+    
+    $this->google->clear_token('access,refresh');
 
     return $new_input;
   }
@@ -115,8 +111,38 @@ class PrivTube_Options {
   public function print_section_info()
   {
     ?>
-    Enter your YouTube client id
+    Enter your YouTube client id and secret.<br />
+    <br />
     <?php
+      $refresh_token = $this->google->get_token('refresh');
+      $access_token = $this->google->get_token('access');
+      if ($access_token):
+        $created = intval($access_token['created']);
+        $created_date = date('r', $access_token['created']);
+        $expires_in = intval($access_token['expires_in']);
+        $expires_date = date('r', $created + $expires_in);
+        ?>
+        <div class="alert alert-info" role="alert">
+          <dl>
+            <dt>Access token (<?= $access_token['token_type'] ?>):</dt>
+            <dd><?= $access_token['access_token'] ?></dd>
+            <dt>Created:</dt>
+            <dd><?= $created_date ?></dd>
+            <dt>Expires in <?= $expires_in ?> seconds:</dt>
+            <dd><?= $expires_date ?></dd>
+            <dt>Refresh token:</dt>
+            <dd><?= $refresh_token ?></dd>
+          </dl>
+        </div>
+        <?php
+      else:
+      ?>
+        <div class="alert alert-warning" role="alert">
+          <strong><?= __('Not authenticated') ?></strong>
+          <?php printf(__('Click <a href="%s">here</a> to authenticate'), $this->google->get_auth_url()) ?>
+        </div>
+      <?php
+      endif;
   }
 
   public function client_id_callback()

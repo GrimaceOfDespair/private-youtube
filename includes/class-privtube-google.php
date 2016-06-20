@@ -15,8 +15,6 @@ class PrivTube_Google {
   
   protected $error = null;
   
-  protected $authenticated = false;
-  
   public function __construct() {
     
     $options = get_option('privtube_options');
@@ -56,25 +54,28 @@ class PrivTube_Google {
     $redirect = admin_url('options-general.php?page=privtube-setting-admin');
     $client->setRedirectUri($redirect);
     $client->setAccessType('offline');
+    $client->setApprovalPrompt('force');
     
     return $client;
   }
   
-  public function is_authenticated() {
+  public function get_token($type) {
     
-    return $this->autenticated;
-    
-  }
-  
-  private function get_token() {
-    
-    return get_transient('_privtube_token');
+    return get_transient('_privtube_' . $type . '_token');
     
   }
   
-  private function set_token($token) {
+  private function set_token($type, $token) {
     
-    return set_transient('_privtube_token', $token);
+    set_transient('_privtube_' . $type . '_token', $token);
+    
+  }
+  
+  public function clear_token($types) {
+    
+    foreach (split(',', $types) as $type) {
+      delete_transient('_privtube_' . $type . '_token');
+    }
     
   }
   
@@ -107,7 +108,8 @@ class PrivTube_Google {
       if ($state === strval($_GET['state'])) {
         
         $client->authenticate($_GET['code']);
-        $this->set_token($client->getAccessToken());
+        $this->set_token('access', $client->getAccessToken());
+        $this->set_token('refresh', $client->getRefreshToken());
         
         $redirect = admin_url('options-general.php?page=privtube-setting-admin');
         header('Location: ' . $redirect);
@@ -115,22 +117,22 @@ class PrivTube_Google {
       
     } else {
       
-      $token = $this->get_token();
+      $token = $this->get_token('access');
       if ($token) {
+        
         $client->setAccessToken($token);
+        if ($client->isAccessTokenExpired()) {
+          
+          $refresh_token = $this->get_token('refresh');
+          $client->refreshToken($refresh_token);
+        }
       }
     }
 
     $access_token = $client->getAccessToken();
     if ($access_token) {
       
-      $this->autenticated = true;
-      
-      $this->set_token($access_token);
-      
-    } else {
-      
-      $this->autenticated = false;
+      $this->set_token('access', $access_token);
       
     }  
   }
