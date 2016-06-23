@@ -50,9 +50,24 @@ class PrivTube {
   
   private function load_dependencies() {
 
+    set_include_path(dirname(__FILE__)."/../");
+    require_once 'vendor/autoload.php';
+    
     $script_base = plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-privtube-';
-    foreach (array('loader', 'assets', 'admin', 'options', 'google') as $script) {
+    foreach (array(
+    
+      'loader',
+      'assets',
+      'admin',
+      'options',
+      'google',
+      'cacheitem',
+      'cachepool'
+      
+    ) as $script) {
+      
       require_once $script_base . $script . '.php';
+      
     }
 
     $this->loader = new PrivTube_Loader();

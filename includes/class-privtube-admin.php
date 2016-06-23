@@ -28,6 +28,8 @@ class PrivTube_Admin {
     $this->google = $module->get_google();
     
     add_action( 'admin_menu', [$this, 'menu'] );
+    
+    add_action( 'wp_ajax_videolist', [$this, 'videolist'] );
     //add_action( 'wp_enqueue_scripts', [$this, 'enqueue_styles'] );
     //add_action( 'wp_enqueue_scripts', [$this, 'enqueue_scripts'] );
   }
@@ -65,10 +67,11 @@ class PrivTube_Admin {
     $root_path = plugin_dir_path( dirname(__FILE__) ) . $root->path;
     
     wp_localize_script( 'admin_js', 'configuration', array(
-      'nonce' => wp_create_nonce( 'wp_rest' ),
+      'nonce' => wp_create_nonce( 'privtube' ),
       'locale' => get_locale(),
       'translations' => $this->get_translations(),
       'templateBaseUrl' => plugin_dir_url( dirname(__file__)) . $templatePath,
+      'ajaxurl' => admin_url('admin-ajax.php'),
       'version' => strval(filemtime( $root_path )),
       'clientId' => $this->google->get_client_id(),
     ));
@@ -78,6 +81,33 @@ class PrivTube_Admin {
     $culture = strtolower(str_replace('_', '-', get_locale()));
     wp_register_script( 'angular-locale', "https://code.angularjs.org/1.5.3/i18n/angular-locale_$culture.js" );
     wp_enqueue_script( 'angular-locale');
+  }
+  
+  public function ajax_error($message_object) {
+    status_header( 500 );
+    wp_send_json_error($message_object);
+    die();
+  }
+  
+  public function ajax_success($message_object) {
+    wp_send_json_success($message_object);
+  }
+  
+  public function videolist() {
+    
+    if (!check_ajax_referer( 'privtube', 'nonce', false )) {
+      $this->ajax_error(array(message => 'Security check failed'));
+    }
+    
+    $videos = $this->prepare_videos();
+    
+    if ($this->google_api_error) {
+      $this->error($this->google_api_error);
+    }
+    
+    $this->ajax_success(array(
+      videos => $videos,
+    ));
   }
   
   public function menu() {
@@ -117,7 +147,7 @@ class PrivTube_Admin {
     <?php
   }
 
-  public function new_videos() {
+  public function new_video() {
     ?>
     <h2><?php echo __('Upload Video', 'privtube') ?></h2>
     <div class="container">
@@ -139,7 +169,7 @@ class PrivTube_Admin {
       $channelsResponse = $youtube->channels->listChannels('contentDetails', array(
         'mine' => 'true',
       ));
-
+      
       $videos = array();
       
       foreach ($channelsResponse['items'] as $channel) {
@@ -152,6 +182,8 @@ class PrivTube_Admin {
           'playlistId' => $uploadsListId,
           'maxResults' => 50
         ));
+
+        //echo '<pre>'. print_r($playlistItemsResponse, true) . '</pre>';
 
         //$htmlBody .= "<h3>Videos in list $uploadsListId</h3><ul>";
         foreach ($playlistItemsResponse['items'] as $playlistItem) {

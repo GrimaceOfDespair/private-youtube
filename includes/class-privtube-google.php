@@ -44,9 +44,6 @@ class PrivTube_Google {
 
   public function create_google_client() {
     
-    set_include_path(dirname(__FILE__)."/../");
-    require_once 'vendor/autoload.php';
-    
     $client = new Google_Client();
     $client->setClientId($this->yt_client_id);
     $client->setClientSecret($this->yt_client_secret);
@@ -55,6 +52,7 @@ class PrivTube_Google {
     $client->setRedirectUri($redirect);
     $client->setAccessType('offline');
     $client->setApprovalPrompt('force');
+    $client->setCache(new PrivTube_CachePool());
     
     return $client;
   }

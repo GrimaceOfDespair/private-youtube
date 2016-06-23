@@ -9,39 +9,24 @@
     .module('privtube.admin')
     .controller('VideosController', [
     
-      '$scope', 'gapiClient', 'configuration',
-      function($scope, gapiClient, configuration) {
+      '$scope', '$http', '$q', 'configuration',
+      function($scope, $http, $q, configuration) {
         
-        gapiClient
-          .loadChannel(configuration.channelId)
-          .then(function(result) {
+        $http({
+          method: 'POST',
+          url: configuration.ajaxurl,
+          params: {
+            action: 'videolist',
+            nonce: configuration.nonce
+          },
+        })
+        .success(function(response) {
+          $scope.videos = response.data.videos;
+        });
+        
+        $scope.toggleStatus = function() {
           
-            var videos = [];
-            var items = result.items;
-            
-            for (var i = 0; i < items.length; i++) {
-              
-              var item = items[i].snippet;
-              var id = items[i].id;
-              switch (id.kind)
-              {
-                case 'youtube#channel':
-                  $scope.title = item.title;
-                  break;
-                  
-                case 'youtube#video':
-                  videos.push({
-                    id: id.videoId,
-                    title: item.title,
-                    publishedAd: item.publishedAt,
-                    thumbnail: item.thumbnails.medium.url
-                  });
-                  break;
-              }
-            }
-            
-            $scope.videos = videos;
-          });
+        }
       }
     ]);
 })();
