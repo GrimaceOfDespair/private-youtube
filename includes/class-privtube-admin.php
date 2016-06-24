@@ -87,7 +87,6 @@ class PrivTube_Admin {
   public function ajax_error($message_object) {
     status_header( 500 );
     wp_send_json_error($message_object);
-    die();
   }
   
   public function ajax_success($message_object) {
@@ -96,86 +95,53 @@ class PrivTube_Admin {
   
   public function set_video_status() {
     
-    $data = json_decode(file_get_contents('php://input'));
-
-    $video_id = $data->id;
-    if (!$video_id) {
-      $this->ajax_error( array( message=> 'Video id required' ) );
-    }
-    
-    $video_status = $data->status;
-    if (!$video_status) {
-      $this->ajax_error( array( message=> 'Video status required' ) );
-    }
-    
-    switch ($video_status) {
-      case 'unlisted':
-      case 'public':
-      case 'private':
-        break;
-        
-      default:
-        $this->ajax_error( array( message=> 'Video status ' . $video_status . ' not supported') );
-    }
-    
     try {
-
-      $status = new Google_Service_YouTube_VideoStatus();
-      $status->setPrivacyStatus($video_status);
-
-      $video = new Google_Service_YouTube_Video();
-      $video->setId($video_id);
-      $video->setStatus($status);
-    
-      $youtube = $this->google->create_youtube_client();
       
-      $updated_video = $youtube->videos->update('status', $video);
+      $data = json_decode(file_get_contents('php://input'));
       
-    } catch (Google_Service_Exception $e) {
-      $this->ajax_error(array(
-        type => __('Service error', 'privtube'),
-        message => $e->getMessage()
-      ));
-    } catch (Google_Exception $e) {
-      $this->ajax_error(array(
-        type => __('Client error', 'privtube'),
-        message => $e->getMessage()
-      ));
+      $video_id = $data->id;
+      if (!$video_id) {
+        throw new Exception( 'Video id required' );
+      }
+      
+      $video_status = $data->status;
+      if (!$video_status) {
+        throw new Exception( 'Video status required' );
+      }
+      
+      $video = $this->google->set_video_status($video_id, $video_status);
+      
+      $this->ajax_success($video);
+      
+    } catch (Exception $e) {
+      
+      $this->ajax_error($e);
     }
-    
-    delete_transient('privtube_list_videos');
-    
-    $this->ajax_success($this->create_video($updated_video));
   }
   
   public function list_videos() {
     
-    if (!check_ajax_referer( 'privtube', 'nonce', false )) {
-      $this->ajax_error(array(message => 'Security check failed'));
-    }
-    
-    $videos = get_transient('privtube_list_videos');
-    if (!$videos) {
+    try {
       
-      $videos = $this->prepare_videos();
-      
-      if ($this->google_api_error) {
-        $this->ajax_error($this->google_api_error);
+      if (!check_ajax_referer( 'privtube', 'nonce', false )) {
+        throw new Exception('Security check failed');
       }
       
-      set_transient('privtube_list_videos', $videos, 60 * 60);
+      $this->ajax_success(array(
+        videos => $this->google->list_videos(),
+      ));
+      
+    } catch (Exception $e) {
+      
+      $this->ajax_error($e);
     }
-    
-    $this->ajax_success(array(
-      videos => $videos,
-    ));
   }
   
   public function menu() {
     global $submenu;
     
     $admin_pages = array(
-      add_media_page( $this->__('All videos', 'privtube'), $this->__('All videos', 'privtube'), 'manage_videos', 'privtube-all-videos', [&$this, 'all_videos']),
+      add_media_page( $this->__('All videos', 'privtube'), $this->__('All videos', 'privtube'), 'manage_videos', 'privtube-all-videos', [&$this, 'manage_videos']),
       add_media_page( $this->__('New video', 'privtube'), $this->__('New video', 'privtube'), 'manage_videos', 'privtube-new-video', [&$this, 'new_video']),
     );
     
@@ -185,25 +151,14 @@ class PrivTube_Admin {
     }
   }
   
-  public function all_videos() {
+  public function manage_videos() {
     
-    $videos = $this->prepare_videos();
     ?>
     <h2><?php echo __('YouTube Videos', 'privtube') ?></h2>
     <div class="container">
-      <?php if ($this->google_api_error): ?>
-        <div class="alert alert-danger" role="alert">
-          <strong><?= $this->google_api_error['type'] ?></strong><br />
-          <code><?= $this->google_api_error['message'] ?></code><br />
-          <br />
-          <?=
-            sprintf(__('Click <a href="%s">here</a> to reconfigure YouTube access', 'privtube'),
-              admin_url('options-general.php?page=privtube-setting-admin'));
-          ?> 
-        </div>
-      <?php else:
-        include( dirname(dirname( __FILE__ )) . '/templates/all-videos.php' );
-        endif; ?>
+      <?php
+        include( dirname(dirname( __FILE__ )) . '/templates/manage-videos.php' );
+      ?>
     </div>
     <?php
   }
@@ -213,76 +168,12 @@ class PrivTube_Admin {
     <h2><?php echo __('Upload Video', 'privtube') ?></h2>
     <div class="container">
       <?php
-      load_template( dirname(dirname( __FILE__ )) . '/templates/new-video.php' );
+        load_template( dirname(dirname( __FILE__ )) . '/templates/new-video.php' );
       ?>
     </div>
     <?php
   }
   
-  public function prepare_videos() {
-    
-    // Check to ensure that the access token was successfully acquired.
-    try {
-      // Call the channels.list method to retrieve information about the
-      // currently authenticated user's channel.
-      $youtube = $this->google->create_youtube_client();
-      
-      $channelsResponse = $youtube->channels->listChannels('contentDetails', array(
-        'mine' => 'true',
-      ));
-      
-      $videos = array();
-      
-      foreach ($channelsResponse['items'] as $channel) {
-        // Extract the unique playlist ID that identifies the list of videos
-        // uploaded to the channel, and then call the playlistItems.list method
-        // to retrieve that list.
-        $uploadsListId = $channel['contentDetails']['relatedPlaylists']['uploads'];
-
-        $playlistItemsResponse = $youtube->playlistItems->listPlaylistItems('snippet,status', array(
-          'playlistId' => $uploadsListId,
-          'maxResults' => 50
-        ));
-
-        foreach ($playlistItemsResponse['items'] as $playlistItem) {
-          
-          $videos []= $this->create_video($playlistItem);
-        }
-      }
-
-      return $videos;
-      
-    } catch (Google_Service_Exception $e) {
-      $this->google_api_error = array(
-        type => __('Service error', 'privtube'),
-        message => $e->getMessage()
-      );
-    } catch (Google_Exception $e) {
-      $this->google_api_error = array(
-        type => __('Client error', 'privtube'),
-        message => $e->getMessage()
-      );
-    }
-    
-    return null;
-  }
-  
-  private function create_video($playlistItem) {
-    
-    $id = $playlistItem->getId();
-    $snippet = $playlistItem['snippet'];
-    $video_id = $snippet['resourceId']['videoId'];
-    
-    return array(
-      id => $video_id,
-      title => $snippet['title'],
-      publishedAt => mysql2date( get_option('date_format'), $snippet['publishedAt']),
-      thumbnail => $snippet['thumbnails']['default']['url'],
-      url => 'https://www.youtube.com/watch?v=' . $video_id . '?rel=0',
-      status => $playlistItem['status']['privacyStatus']
-    );
-  }
-
   private function get_translations() {
     
     $merged_translations = array();

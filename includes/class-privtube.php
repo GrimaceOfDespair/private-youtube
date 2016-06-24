@@ -77,6 +77,7 @@ class PrivTube {
     
     $this->loader->add_action( 'plugins_loaded', $this, 'load_text_domain' );
     $this->loader->add_action( 'activated_plugin', $this, 'fix_plugin_dependencies' );
+    $this->loader->add_action( 'wp_router_generate_routes', $this, 'add_video_routes' );
   }
 
   private function define_admin_hooks() {
@@ -101,6 +102,33 @@ class PrivTube {
     }
 
     return $assets;
+  }
+  
+  public function add_video_routes($router) {
+    
+    $route_args = array(
+      'path' => '^videos',
+      'query_vars' => array( ),
+      'page_callback' => [ $this, 'videos' ],
+      'page_arguments' => array( ),
+      'access_callback' => true,
+      'title' => __( 'Videos page' )
+    );
+
+    $router->add_route( 'videos', $route_args );
+  }
+  
+  public function videos() {
+    
+    $videos = $this->google->list_videos();
+    ?>
+    <h2><?php echo __('Videos', 'privtube') ?></h2>
+    <div class="container">
+      <?php
+        include( dirname(dirname( __FILE__ )) . '/templates/videos.php' );
+      ?>
+    </div>
+    <?php
   }
 
   public function fix_plugin_dependencies() {
