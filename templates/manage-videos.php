@@ -1,3 +1,9 @@
+<div class="container">
+  <form method="post" action="<?php menu_page_url('privtube-all-videos') ?>" role="form">
+    <?php submit_button( __('Refresh', 'privtube'), 'primary', 'submit_clear', false ); ?>
+  </form>
+</div>
+
 <div ng-app="privtube.admin" ng-controller="VideosController">
   <ul>
     <li ng-repeat="video in videos" class="col-xs-6 col-sm-4 col-md-3">

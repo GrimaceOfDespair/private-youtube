@@ -20,6 +20,8 @@ class PrivTube_Admin {
     ),
   );
   
+  protected $notices = array();
+  
   public function __construct( $module ) {
 
     $this->version = $module->get_version();
@@ -31,6 +33,7 @@ class PrivTube_Admin {
     
     add_action( 'wp_ajax_listVideos', [$this, 'list_videos'] );
     add_action( 'wp_ajax_setVideoStatus', [$this, 'set_video_status'] );
+    add_action( 'admin_notices', [$this, 'admin_notices'] );
     //add_action( 'wp_enqueue_scripts', [$this, 'enqueue_styles'] );
     //add_action( 'wp_enqueue_scripts', [$this, 'enqueue_scripts'] );
   }
@@ -39,6 +42,17 @@ class PrivTube_Admin {
     
     return __($text, $this->plugin_name);
     
+  }
+  
+  public function admin_notices() {
+
+    foreach ( $this->notices as $notice ) {
+      ?>
+      <div class="<?= $notice['type'] ?>">
+        <p><?= $notice['message'] ?></p>
+      </div>
+      <?php
+    }
   }
   
   public function enqueue_styles() {
@@ -148,11 +162,24 @@ class PrivTube_Admin {
     foreach ($admin_pages as $admin_page) {
       add_action( 'load-' . $admin_page, array( $this, 'enqueue_scripts' ) );
       add_action( 'load-' . $admin_page, array( $this, 'enqueue_styles' ) );
+      add_action( 'load-' . $admin_page, array( $this, 'handle_actions' ) );
+    }
+  }
+  
+  public function handle_actions() {
+    
+    if ($_POST['submit_clear']) {
+
+      $this->google->clear_videocache();
+      
+      $this->notices []= array(
+        type => 'updated',
+        message => __('Cache was cleared', 'privtube')
+      );
     }
   }
   
   public function manage_videos() {
-    
     ?>
     <h2><?php echo __('YouTube Videos', 'privtube') ?></h2>
     <div class="container">

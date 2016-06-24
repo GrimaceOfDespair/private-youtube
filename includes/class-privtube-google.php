@@ -152,29 +152,30 @@ class PrivTube_Google {
     // currently authenticated user's channel.
     $youtube = $this->create_youtube_client();
     
-    $channelsResponse = $youtube->channels->listChannels('contentDetails', array(
-      'mine' => 'true',
+    $query = '##' . implode(' ##', $user_roles);
+    
+    $searchResponse = $youtube->search->listSearch('id,snippet', array(
+      'type' => 'video',
+      'q' => $query,
+      'forMine' => true,
+      'maxResults' => 50,
     ));
-    
-    $videos = array();
-    
-    foreach ($channelsResponse['items'] as $channel) {
-      // Extract the unique playlist ID that identifies the list of videos
-      // uploaded to the channel, and then call the playlistItems.list method
-      // to retrieve that list.
-      $uploadsListId = $channel['contentDetails']['relatedPlaylists']['uploads'];
 
-      $playlistItemsResponse = $youtube->playlistItems->listPlaylistItems('snippet,status', array(
-        'playlistId' => $uploadsListId,
-        'maxResults' => 50
-      ));
-
-      foreach ($playlistItemsResponse['items'] as $playlistItem) {
-        
-        $videos []= $this->create_video($playlistItem);
-      }
+    $video_ids = array();
+    foreach ($searchResponse['items'] as $video) {
+      
+      $video_ids []= $video['id']['videoId'];
     }
+    $listResponse = $youtube->videos->listVideos('snippet,status', array(
+      'id' => implode( ',', $video_ids ),
+      'maxResults' => 50
+    ));
 
+    foreach ($listResponse['items'] as $videoDetails) {
+      
+      $videos []= $this->create_video($videoDetails);
+    }
+    
     set_transient($cache_key, $videos, 60 * 60);
     
     return $videos;
@@ -219,12 +220,12 @@ class PrivTube_Google {
     }
   }
   
-  private function create_video($playlistItem) {
+  private function create_video($video) {
     
-    $id = $playlistItem->getId();
-    $snippet = $playlistItem['snippet'];
-    $video_id = $snippet['resourceId']['videoId'];
-    
+    $id = $video->getId();
+    $snippet = $video['snippet'];
+    $video_id = $video['id'];
+
     return array(
       id => $video_id,
       title => $snippet['title'],
@@ -233,7 +234,7 @@ class PrivTube_Google {
       thumbnail => $snippet['thumbnails']['default']['url'],
       url => 'https://www.youtube.com/watch?v=' . $video_id . '?rel=0',
       embed => 'https://www.youtube.com/embed/' . $video_id . '?rel=0&showinfo=0',
-      status => $playlistItem['status']['privacyStatus']
+      status => $video['status']['privacyStatus']
     );
   }
 
