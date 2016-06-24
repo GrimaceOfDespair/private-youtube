@@ -234,7 +234,8 @@ class PrivTube_Google {
       thumbnail => $snippet['thumbnails']['default']['url'],
       url => 'https://www.youtube.com/watch?v=' . $video_id . '?rel=0',
       embed => 'https://www.youtube.com/embed/' . $video_id . '?rel=0&showinfo=0',
-      status => $video['status']['privacyStatus']
+      status => $video['status']['privacyStatus'],
+      tags => $snippet['tags']
     );
   }
 
