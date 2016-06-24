@@ -16,6 +16,8 @@ class PrivTube_Options {
   
   protected $google;
   
+  protected $action;
+  
   public function __construct( $module ) {
 
     $this->version = $module->get_version();
@@ -51,7 +53,10 @@ class PrivTube_Options {
         <?php
             settings_fields( 'privtube_option_group' );   
             do_settings_sections( 'privtube-setting-admin' );
-            submit_button(); 
+            submit_button( null , 'primary', 'submit_save', false);
+        ?>
+        <?php
+            submit_button( __('Clear cache', 'privtube'), 'secondary', 'submit_clear', false );
         ?>
         </form>
     </div>
@@ -95,17 +100,33 @@ class PrivTube_Options {
   
   public function sanitize( $input )
   {
-    $new_input = array();
+    if ($_POST['submit_save']) {
+      
+      $new_input = array();
 
-    if( isset( $input['client_id'] ) )
-      $new_input['client_id'] = sanitize_text_field( $input['client_id'] );
+      if( isset( $input['client_id'] ) )
+        $new_input['client_id'] = sanitize_text_field( $input['client_id'] );
 
-    if( isset( $input['client_secret'] ) )
-      $new_input['client_secret'] = sanitize_text_field( $input['client_secret'] );
+      if( isset( $input['client_secret'] ) )
+        $new_input['client_secret'] = sanitize_text_field( $input['client_secret'] );
+      
+      $this->google->clear_token('access,refresh');
+      
+      $this->action = 'submit_save';
+      
+      return $new_input;
     
-    $this->google->clear_token('access,refresh');
-
-    return $new_input;
+    } else if ($_POST['submit_clear']) {
+      
+      $this->google->clear_videocache();
+      
+      add_settings_error(
+          'submit_clear',
+          esc_attr( 'cache_cleared' ),
+          __('Cache was cleared', 'privtube'),
+          'updated'
+      );
+    }
   }
 
   public function print_section_info()
@@ -138,8 +159,8 @@ class PrivTube_Options {
       else:
       ?>
         <div class="alert alert-warning" role="alert">
-          <strong><?= __('Not authenticated') ?></strong>
-          <?php printf(__('Click <a href="%s">here</a> to authenticate'), $this->google->get_auth_url()) ?>
+          <strong><?= __('Not authenticated', 'privtube') ?></strong>
+          <?php printf(__('Click <a href="%s">here</a> to authenticate', 'privtube'), $this->google->get_auth_url()) ?>
         </div>
       <?php
       endif;

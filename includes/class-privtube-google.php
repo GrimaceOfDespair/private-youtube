@@ -137,9 +137,11 @@ class PrivTube_Google {
     }  
   }
 
-  public function list_videos() {
+  public function list_videos( $user_roles = array() ) {
     
-    $videos = get_transient('privtube_list_videos');
+    $cache_key = 'privtube_videos_' . implode( ',', $user_roles);
+    $videos = get_transient($cache_key);
+    
     if ($videos) {
       
       return $videos;
@@ -173,9 +175,14 @@ class PrivTube_Google {
       }
     }
 
-    set_transient('privtube_list_videos', $videos, 60 * 60);
+    set_transient($cache_key, $videos, 60 * 60);
     
     return $videos;
+  }
+  
+  public function clear_videocache() {
+    
+    $this->clear('privtube_videos');    
   }
   
   public function set_video_status($video_id, $video_status) {
@@ -201,7 +208,7 @@ class PrivTube_Google {
     
     $updated_video = $youtube->videos->update('status', $video);
     
-    delete_transient('privtube_list_videos');
+    $this->clear_videocache();
     
     return $this->create_video($updated_video);
   }
@@ -221,11 +228,47 @@ class PrivTube_Google {
     return array(
       id => $video_id,
       title => $snippet['title'],
+      description => $snippet['description'],
       publishedAt => mysql2date( get_option('date_format'), $snippet['publishedAt']),
       thumbnail => $snippet['thumbnails']['default']['url'],
       url => 'https://www.youtube.com/watch?v=' . $video_id . '?rel=0',
+      embed => 'https://www.youtube.com/embed/' . $video_id . '?rel=0&showinfo=0',
       status => $playlistItem['status']['privacyStatus']
     );
   }
 
+  private function clear( $prefix = 'privtube' ) {
+    
+    global $wpdb;
+
+    $options = $wpdb->options;
+
+    $t = esc_sql( "_transient_timeout_" . $prefix . '%');
+
+    $sql = $wpdb->prepare (
+      "
+        SELECT option_name
+        FROM $options
+        WHERE option_name LIKE '%s'
+      ",
+      $t
+    );
+
+    $transients = $wpdb->get_col( $sql );
+
+    // For each transient...
+    foreach( $transients as $transient ) {
+
+      // Strip away the WordPress prefix in order to arrive at the transient key.
+      $key = str_replace( '_transient_timeout_', '', $transient );
+
+      // Now that we have the key, use WordPress core to the delete the transient.
+      delete_transient( $key );
+
+    }
+    
+    // But guess what?  Sometimes transients are not in the DB, so we have to do this too:
+    wp_cache_flush();
+  }
+  
 }

@@ -8,7 +8,7 @@
         <figcaption>
           <h4>
             <a ng-click="toggleStatus(video)" class="button"
-              ng-attr-title="{{video.status == 'public' ? '<?= __('Make private') ?>' : '<?= __('Make public') ?>'}}"
+              ng-attr-title="{{video.status == 'public' ? '<?= __('Make private', 'privtube') ?>' : '<?= __('Make public', 'privtube') ?>'}}"
               ><i
               ng-class="video.status == 'public' ? 'glyphicon-eye-open' : 'glyphicon-eye-close'"
               class="glyphicon"></i></a>

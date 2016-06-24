@@ -111,8 +111,7 @@ class PrivTube {
       'query_vars' => array( ),
       'page_callback' => [ $this, 'videos' ],
       'page_arguments' => array( ),
-      'access_callback' => true,
-      'title' => __( 'Videos page' )
+      'access_callback' => true
     );
 
     $router->add_route( 'videos', $route_args );
@@ -120,7 +119,9 @@ class PrivTube {
   
   public function videos() {
     
-    $videos = $this->google->list_videos();
+    $user = wp_get_current_user();
+    
+    $videos = $this->google->list_videos($user->roles);
     ?>
     <h2><?php echo __('Videos', 'privtube') ?></h2>
     <div class="container">
