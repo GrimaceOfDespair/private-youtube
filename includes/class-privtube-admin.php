@@ -29,7 +29,8 @@ class PrivTube_Admin {
     
     add_action( 'admin_menu', [$this, 'menu'] );
     
-    add_action( 'wp_ajax_videolist', [$this, 'videolist'] );
+    add_action( 'wp_ajax_listVideos', [$this, 'list_videos'] );
+    add_action( 'wp_ajax_setVideoStatus', [$this, 'set_video_status'] );
     //add_action( 'wp_enqueue_scripts', [$this, 'enqueue_styles'] );
     //add_action( 'wp_enqueue_scripts', [$this, 'enqueue_scripts'] );
   }
@@ -93,16 +94,76 @@ class PrivTube_Admin {
     wp_send_json_success($message_object);
   }
   
-  public function videolist() {
+  public function set_video_status() {
+    
+    $data = json_decode(file_get_contents('php://input'));
+
+    $video_id = $data->id;
+    if (!$video_id) {
+      $this->ajax_error( array( message=> 'Video id required' ) );
+    }
+    
+    $video_status = $data->status;
+    if (!$video_status) {
+      $this->ajax_error( array( message=> 'Video status required' ) );
+    }
+    
+    switch ($video_status) {
+      case 'unlisted':
+      case 'public':
+      case 'private':
+        break;
+        
+      default:
+        $this->ajax_error( array( message=> 'Video status ' . $video_status . ' not supported') );
+    }
+    
+    try {
+
+      $status = new Google_Service_YouTube_VideoStatus();
+      $status->setPrivacyStatus($video_status);
+
+      $video = new Google_Service_YouTube_Video();
+      $video->setId($video_id);
+      $video->setStatus($status);
+    
+      $youtube = $this->google->create_youtube_client();
+      
+      $updated_video = $youtube->videos->update('status', $video);
+      
+    } catch (Google_Service_Exception $e) {
+      $this->ajax_error(array(
+        type => __('Service error', 'privtube'),
+        message => $e->getMessage()
+      ));
+    } catch (Google_Exception $e) {
+      $this->ajax_error(array(
+        type => __('Client error', 'privtube'),
+        message => $e->getMessage()
+      ));
+    }
+    
+    delete_transient('privtube_list_videos');
+    
+    $this->ajax_success($this->create_video($updated_video));
+  }
+  
+  public function list_videos() {
     
     if (!check_ajax_referer( 'privtube', 'nonce', false )) {
       $this->ajax_error(array(message => 'Security check failed'));
     }
     
-    $videos = $this->prepare_videos();
-    
-    if ($this->google_api_error) {
-      $this->error($this->google_api_error);
+    $videos = get_transient('privtube_list_videos');
+    if (!$videos) {
+      
+      $videos = $this->prepare_videos();
+      
+      if ($this->google_api_error) {
+        $this->ajax_error($this->google_api_error);
+      }
+      
+      set_transient('privtube_list_videos', $videos, 60 * 60);
     }
     
     $this->ajax_success(array(
@@ -183,22 +244,9 @@ class PrivTube_Admin {
           'maxResults' => 50
         ));
 
-        //echo '<pre>'. print_r($playlistItemsResponse, true) . '</pre>';
-
-        //$htmlBody .= "<h3>Videos in list $uploadsListId</h3><ul>";
         foreach ($playlistItemsResponse['items'] as $playlistItem) {
           
-          $snippet = $playlistItem['snippet'];
-          $video_id = $snippet['resourceId']['videoId'];
-          
-          $videos []= array(
-            id => $video_id,
-            title => $snippet['title'],
-            publishedAt => mysql2date( get_option('date_format'), $snippet['publishedAt']),
-            thumbnail => $snippet['thumbnails']['default']['url'],
-            url => 'https://www.youtube.com/watch?v=' . $video_id . '?rel=0',
-            status => $playlistItem['status']['privacyStatus']
-          );
+          $videos []= $this->create_video($playlistItem);
         }
       }
 
@@ -217,6 +265,22 @@ class PrivTube_Admin {
     }
     
     return null;
+  }
+  
+  private function create_video($playlistItem) {
+    
+    $id = $playlistItem->getId();
+    $snippet = $playlistItem['snippet'];
+    $video_id = $snippet['resourceId']['videoId'];
+    
+    return array(
+      id => $video_id,
+      title => $snippet['title'],
+      publishedAt => mysql2date( get_option('date_format'), $snippet['publishedAt']),
+      thumbnail => $snippet['thumbnails']['default']['url'],
+      url => 'https://www.youtube.com/watch?v=' . $video_id . '?rel=0',
+      status => $playlistItem['status']['privacyStatus']
+    );
   }
 
   private function get_translations() {

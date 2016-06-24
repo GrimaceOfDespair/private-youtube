@@ -52,27 +52,26 @@ class PrivTube_Google {
     $client->setRedirectUri($redirect);
     $client->setAccessType('offline');
     $client->setApprovalPrompt('force');
-    $client->setCache(new PrivTube_CachePool());
     
     return $client;
   }
   
   public function get_token($type) {
     
-    return get_transient('_privtube_' . $type . '_token');
+    return get_transient('privtube_' . $type . '_token');
     
   }
   
   private function set_token($type, $token) {
     
-    set_transient('_privtube_' . $type . '_token', $token);
+    set_transient('privtube_' . $type . '_token', $token);
     
   }
   
   public function clear_token($types) {
     
     foreach (split(',', $types) as $type) {
-      delete_transient('_privtube_' . $type . '_token');
+      delete_transient('privtube_' . $type . '_token');
     }
     
   }
@@ -92,7 +91,7 @@ class PrivTube_Google {
     
       $state = mt_rand();
       $this->google_client->setState($state);
-      set_transient('_google_state_'. get_current_user_id(), $state);
+      set_transient('privtube_userstate_'. get_current_user_id(), $state);
 
       return $this->google_client->createAuthUrl();
   }
@@ -102,7 +101,7 @@ class PrivTube_Google {
     $client = $this->google_client;
     
     if (isset($_GET['code'])) {
-      $state = get_transient('_google_state_'. get_current_user_id());
+      $state = get_transient('privtube_userstate_'. get_current_user_id());
       if ($state === strval($_GET['state'])) {
         
         $client->authenticate($_GET['code']);

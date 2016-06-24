@@ -61,8 +61,6 @@ class PrivTube {
       'admin',
       'options',
       'google',
-      'cacheitem',
-      'cachepool'
       
     ) as $script) {
       

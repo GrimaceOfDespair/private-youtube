@@ -7,8 +7,11 @@
         </a>
         <figcaption>
           <h4>
-            <a ng-click="toggleVideo()"><i
-              class="glyphicon glyphicon-<?= $icon ?>"></i></a>
+            <a ng-click="toggleStatus(video)" class="button"
+              ng-attr-title="{{video.status == 'public' ? '<?= __('Make private') ?>' : '<?= __('Make public') ?>'}}"
+              ><i
+              ng-class="video.status == 'public' ? 'glyphicon-eye-open' : 'glyphicon-eye-close'"
+              class="glyphicon"></i></a>
             <span ng-bind="video.title"></span>
           </h4>
           <h5 ng-bind="video.publishedAt"></h5>

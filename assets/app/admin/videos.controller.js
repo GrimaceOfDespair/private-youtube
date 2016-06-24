@@ -16,7 +16,7 @@
           method: 'POST',
           url: configuration.ajaxurl,
           params: {
-            action: 'videolist',
+            action: 'listVideos',
             nonce: configuration.nonce
           },
         })
@@ -24,8 +24,22 @@
           $scope.videos = response.data.videos;
         });
         
-        $scope.toggleStatus = function() {
-          
+        $scope.toggleStatus = function(video) {
+          $http({
+            method: 'POST',
+            url: configuration.ajaxurl,
+            params: {
+              action: 'setVideoStatus',
+              nonce: configuration.nonce
+            },
+            data: {
+              id: video.id,
+              status: (video.status == 'public' ? 'unlisted' : 'public'), 
+            },
+          })
+          .success(function(response) {
+            video.status = response.data.status;
+          });
         }
       }
     ]);
