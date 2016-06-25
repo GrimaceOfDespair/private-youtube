@@ -142,12 +142,12 @@ class PrivTube_Admin {
       }
       
       $this->ajax_success(array(
-        videos => $this->google->list_videos(),
+        videos => $this->google->list_videos( false ),
       ));
       
     } catch (Exception $e) {
       
-      $this->ajax_error($e);
+      $this->ajax_error($e->getMessage());
     }
   }
   

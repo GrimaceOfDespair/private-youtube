@@ -47,13 +47,14 @@
     <div class="modal-body">
       <ul>
         <?php foreach (get_editable_roles() as $role_name => $role_info) { ?>
-          <li class="form-group">
+          <li class="form-group col-md-2">
             <label for="role_<?= $role_name ?>"><?= translate_user_role( $role_info['name'] ) ?></label>
             <input id="role_<?= $role_name ?>" class="form-control" type="checkbox" ng-model="roles.<?= $role_name ?>" />
           </li>
         <?php } ?>
       </ul>
     </div>
+    <div class="clearfix"></div>
     <div class="modal-footer">
       <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
       <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>

@@ -121,7 +121,7 @@ class PrivTube {
     
     $user = wp_get_current_user();
     
-    $videos = $this->google->list_videos($user->roles);
+    $videos = $this->google->list_videos( true, $user->roles );
     ?>
     <h2><?php echo __('Videos', 'privtube') ?></h2>
     <div class="container">
