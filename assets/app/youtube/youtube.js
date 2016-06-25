@@ -5,6 +5,7 @@
     'privtube.common',
     'ngAnimate',
     'ngFileUpload',
-    'mgcrea.ngStrap'
+    'mgcrea.ngStrap',
+    'ui.bootstrap'
   ]);
 })();

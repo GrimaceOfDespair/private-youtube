@@ -186,7 +186,7 @@ class PrivTube_Google {
     $this->clear('privtube_videos');    
   }
   
-  public function set_video_status($video_id, $video_status) {
+  public function set_video_properties($video_id, $video_status, $video_tags) {
     
     switch ($video_status) {
       case 'unlisted':
@@ -198,16 +198,25 @@ class PrivTube_Google {
         throw new Exception('Video status ' . $video_status . ' not supported');
     }
     
-    $status = new Google_Service_YouTube_VideoStatus();
-    $status->setPrivacyStatus($video_status);
-
-    $video = new Google_Service_YouTube_Video();
-    $video->setId($video_id);
-    $video->setStatus($status);
-  
     $youtube = $this->create_youtube_client();
     
-    $updated_video = $youtube->videos->update('status', $video);
+    $listResponse = $youtube->videos->listVideos('snippet,status', array(
+      'id' => $video_id
+    ));
+    
+    if (count($listResponse['items']) == 0) {
+      throw new Exception('Video with id ' . $video_id . ' not found');
+    }
+    
+    $video = $listResponse['items'][0];
+
+    $status = $video['status'];
+    $status->setPrivacyStatus($video_status);
+    
+    $snippet = $video['snippet'];
+    $snippet->setTags($video_tags);
+
+    $updated_video = $youtube->videos->update('status,snippet', $video);
     
     $this->clear_videocache();
     
