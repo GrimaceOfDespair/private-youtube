@@ -9,8 +9,11 @@
     .module('privtube.admin')
     .controller('VideosController', [
     
-      '$scope', '$http', '$q', 'configuration',
-      function($scope, $http, $q, configuration) {
+      '$scope', '$http', '$q', '$element', 'configuration',
+      function($scope, $http, $q, $element, configuration) {
+        
+        $scope.roles = $element[0].attributes['data-roles'].value;
+        $scope.role = null;
         
         $http({
           method: 'POST',
