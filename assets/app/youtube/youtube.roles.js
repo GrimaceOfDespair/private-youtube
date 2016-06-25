@@ -20,7 +20,9 @@
           
           var roles = [];
           for (var role in $scope.roles) {
-            roles.push(role);
+            if ($scope.roles[role]) {
+              roles.push(role);
+            }
           }
           var status = roles.length == 0 ? 'public' : 'unlisted';
           
