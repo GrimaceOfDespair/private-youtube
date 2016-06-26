@@ -1,4 +1,4 @@
-<script type="text/ng-template" id="template/allowRoles.html">
+<script type="text/ng-template" id="template/video-properties.html">
   <form>
     <div class="modal-header">
       <h3 class="modal-title"><?= __('Video data') ?></h3>

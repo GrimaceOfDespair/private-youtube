@@ -141,7 +141,6 @@ var jsTasks = function(filename) {
         return !/bower_components/.test(file.path);
       }, embedTemplates({
         basePath: 'assets/app',
-        skipTemplates: /allowRoles\.html/,
         skipErrors: true
       }));
     })

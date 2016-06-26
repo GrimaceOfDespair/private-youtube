@@ -3,7 +3,7 @@
   
   angular
     .module('privtube.admin')
-    .controller('RolesController', [
+    .controller('VideoPropertiesController', [
     
       '$scope', '$modalInstance', 'video', '$http', 'toastr',
       function($scope, $modalInstance, video, $http, toastr) {

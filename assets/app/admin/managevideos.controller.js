@@ -23,8 +23,8 @@
         $scope.toggleStatus = function(video) {
           
           var modalInstance = $uibModal.open({
-            templateUrl: 'template/allowRoles.html',
-            controller: 'RolesController',
+            templateUrl: 'template/video-properties.html',
+            controller: 'VideoPropertiesController',
             resolve: {
               video: function() {
                 return video;
