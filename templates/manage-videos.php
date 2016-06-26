@@ -45,7 +45,21 @@
       <h3 class="modal-title"><?= __('Allow video access') ?></h3>
     </div>
     <div class="modal-body">
-      <ul>
+      <div class="col-md-12">
+        <div class="btn-group" data-toggle="buttons">
+          <label ng-click="status = 'public'" ng-class="{'active':status=='public'}" class="btn btn-primary">
+            <input type="radio" name="access" id="public" autocomplete="off" ng-checked="status=='public'">
+            <?= __('Everyone', 'privtube') ?>
+          </label>
+          <label ng-click="status = 'private'" ng-class="{'active':status!='public'}" class="btn btn-primary">
+            <input type="radio" name="access" id="unlisted" autocomplete="off" ng-checked="status!='public'">
+            <?= __('Private', 'privtube') ?>
+          </label>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+      <br />
+      <ul ng-if="status!='public'">
         <?php foreach (get_editable_roles() as $role_name => $role_info) { ?>
           <li class="form-group col-md-2">
             <label for="role_<?= $role_name ?>"><?= translate_user_role( $role_info['name'] ) ?></label>
@@ -55,6 +69,7 @@
       </ul>
     </div>
     <div class="clearfix"></div>
+    <br />
     <div class="modal-footer">
       <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
       <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>

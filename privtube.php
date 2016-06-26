@@ -13,7 +13,7 @@
  * @wordpress-plugin
  * Plugin Name:       Private YouTube
  * Plugin URI:        http://www.bithive.be/
- * Description:       Manager your private YouTube channel with WordPress
+ * Description:       Manage your private YouTube channel with WordPress
  * Version:           1.0.0
  * Author:            BitHive
  * Author URI:        http://www.bithive.be/

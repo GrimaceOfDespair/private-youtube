@@ -5,11 +5,14 @@
     .module('privtube.admin')
     .controller('RolesController', [
     
-      '$scope', '$modalInstance', 'roles',
-      function($scope, $modalInstance, roles) {
+      '$scope', '$modalInstance', 'video',
+      function($scope, $modalInstance, video) {
+        
+        $scope.status = video.status;
         
         $scope.roles = {};
         
+        var roles = video.tags;
         if (roles) {
           for (var i = 0; i < roles.length; i++) {
             $scope.roles[roles[i]] = true;

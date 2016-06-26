@@ -34,8 +34,8 @@
             templateUrl: 'template/allowRoles.html',
             controller: 'RolesController',
             resolve: {
-              roles: function() {
-                return video.tags;
+              video: function() {
+                return video;
               }
             }
           });

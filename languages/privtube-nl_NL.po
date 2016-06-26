@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Private YouTube\n"
-"POT-Creation-Date: 2016-06-19 22:54+0200\n"
-"PO-Revision-Date: 2016-06-19 22:54+0200\n"
+"POT-Creation-Date: 2016-06-26 08:18+0200\n"
+"PO-Revision-Date: 2016-06-26 08:18+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 1.8.8\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-WPHeader: privtube.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -20,62 +20,87 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
-#: includes/class-privtube-admin.php:128
+#: includes/class-privtube-admin.php:158
 msgid "All videos"
 msgstr "Alle video's"
 
-#: includes/class-privtube-admin.php:129
+#: includes/class-privtube-admin.php:159
 msgid "New video"
 msgstr "Nieuwe video"
 
-#: includes/class-privtube-admin.php:140 templates/new-video.php:27
+#: includes/class-privtube-admin.php:177
+#: includes/class-privtube-options.php:126
+msgid "Cache was cleared"
+msgstr "De cache werd ververst"
+
+#: includes/class-privtube-admin.php:184 templates/new-video.php:27
 msgid "YouTube Videos"
 msgstr "YouTube-video's"
 
-#: includes/class-privtube-admin.php:153
+#: includes/class-privtube-admin.php:195
 msgid "Upload Video"
 msgstr "Upload video"
 
-#: includes/class-privtube-admin.php:168
-msgid "The session state did not match."
-msgstr "Sessie komt niet overeen."
-
-#: includes/class-privtube-admin.php:213
-msgid "Service error:"
-msgstr "Servicefout:"
-
-#: includes/class-privtube-admin.php:220
-msgid "Client error:"
-msgstr "Clientfout:"
-
-#: includes/class-privtube-admin.php:238
-msgid "Authorization Required:"
-msgstr "Authorisatie vereist:"
-
-#: includes/class-privtube-admin.php:239
-#, php-format
-msgid "<a href=\"%s\">Authorize</a> before proceeding."
-msgstr "<a href=\"%s\">Autoriseer</a> om verder te gaan."
-
-#: includes/class-privtube-options.php:27
-#: includes/class-privtube-options.php:36
-#: includes/class-privtube-options.php:61
+#: includes/class-privtube-options.php:34
+#: includes/class-privtube-options.php:51
+#: includes/class-privtube-options.php:79
 msgid "Private YouTube Settings"
 msgstr "Instellingen Private YouTube"
 
-#: includes/class-privtube-options.php:68
+#: includes/class-privtube-options.php:59
+msgid "Clear cache"
+msgstr "Cache verversen"
+
+#: includes/class-privtube-options.php:86
 msgid "Client ID"
 msgstr "Client Id"
 
-#: includes/class-privtube-options.php:76
+#: includes/class-privtube-options.php:94
 msgid "Client Secret"
 msgstr "Geheime sleutel"
 
-#: includes/class-privtube-options.php:84
-msgid "Channel ID"
-msgstr "Kanaal-id"
+#: includes/class-privtube-options.php:162
+msgid "Not authenticated"
+msgstr "Niet geauthenticeerd"
 
-#: templates/all-videos.php:19
+#: includes/class-privtube-options.php:163
+#, php-format
+msgid "Click <a href=\"%s\">here</a> to authenticate"
+msgstr "Klik <a href=\"%s\">hier</a> om te authenticeren"
+
+#: includes/class-privtube.php:126
+msgid "Videos"
+msgstr "Videos"
+
+#: templates/manage-videos.php:12
+msgid "Refresh"
+msgstr "Verversen"
+
+#: templates/manage-videos.php:18
+msgid "All"
+msgstr "Allen"
+
+#: templates/manage-videos.php:33
+msgid "Make private"
+msgstr "Maak privé"
+
+#: templates/manage-videos.php:33
+msgid "Make public"
+msgstr "Maak publiek"
+
+#: templates/manage-videos.php:45
+msgid "Allow video access"
+msgstr "Toegang tot video"
+
+#: templates/manage-videos.php:52
+msgid "Everyone"
+msgstr "Iedereen"
+
+#: templates/manage-videos.php:56
+msgid "Private"
+msgstr "Privé"
+
+#: templates/videos.php:18
 msgid "No videos found"
 msgstr "Geen video's gevonden"
 
@@ -89,9 +114,27 @@ msgid "http://www.bithive.be/"
 msgstr ""
 
 #. Description of the plugin/theme
-msgid "Manager your private YouTube channel with WordPress"
-msgstr ""
+msgid "Manage your private YouTube channel with WordPress"
+msgstr "Beheer je privé-YouTubekanaal met WordPress"
 
 #. Author of the plugin/theme
 msgid "BitHive"
 msgstr ""
+
+#~ msgid "The session state did not match."
+#~ msgstr "Sessie komt niet overeen."
+
+#~ msgid "Service error:"
+#~ msgstr "Servicefout:"
+
+#~ msgid "Client error:"
+#~ msgstr "Clientfout:"
+
+#~ msgid "Authorization Required:"
+#~ msgstr "Authorisatie vereist:"
+
+#~ msgid "<a href=\"%s\">Authorize</a> before proceeding."
+#~ msgstr "<a href=\"%s\">Autoriseer</a> om verder te gaan."
+
+#~ msgid "Channel ID"
+#~ msgstr "Kanaal-id"
