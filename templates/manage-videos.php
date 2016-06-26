@@ -39,45 +39,6 @@
     </figcaption>
   </figure>
   
-  <script type="text/ng-template" id="template/allowRoles.html">
-    <div class="modal-header">
-      <h3 class="modal-title"><?= __('Allow video access') ?></h3>
-    </div>
-    <div class="modal-body">
-      <div class="col-md-12">
-        <div class="btn-group" data-toggle="buttons">
-          <label ng-click="status = 'public'" ng-class="{'active':status=='public'}" class="btn btn-primary">
-            <input type="radio" name="access" id="public" autocomplete="off" ng-checked="status=='public'">
-            <?= __('Everyone', 'privtube') ?>
-          </label>
-          <label ng-click="status = 'private'" ng-class="{'active':status!='public'}" class="btn btn-primary">
-            <input type="radio" name="access" id="unlisted" autocomplete="off" ng-checked="status!='public'">
-            <?= __('Private', 'privtube') ?>
-          </label>
-        </div>
-      </div>
-      <div class="clearfix"></div>
-      <br />
-      <ul ng-if="status!='public'">
-        <?php foreach (get_editable_roles() as $role_name => $role_info) { ?>
-          <li class="form-group col-md-2">
-            <label for="role_<?= $role_name ?>"><?= translate_user_role( $role_info['name'] ) ?></label>
-            <input id="role_<?= $role_name ?>" class="form-control" type="checkbox" ng-model="roles.<?= $role_name ?>" />
-          </li>
-        <?php } ?>
-      </ul>
-    </div>
-    <div class="clearfix"></div>
-    <br />
-    <div class="modal-footer">
-      <button class="btn btn-primary has-spinner" type="button" ng-click="ok()" ng-class="{'active':loading}">
-        OK <span class="spinner"></span>
-      </button>
-      <button class="btn btn-warning" type="button" ng-click="cancel()" ng-disabled="loading">
-        Cancel
-      </button>
-    </div>
-  </script>
-  
+  <?php include('video-edit.php') ?>
 </div>
 

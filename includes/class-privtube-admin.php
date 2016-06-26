@@ -32,7 +32,7 @@ class PrivTube_Admin {
     add_action( 'admin_menu', [$this, 'menu'] );
     
     add_action( 'wp_ajax_listVideos', [$this, 'list_videos'] );
-    add_action( 'wp_ajax_videoAllowRoles', [$this, 'video_allow_roles'] );
+    add_action( 'wp_ajax_updateVideo', [$this, 'updateVideo'] );
     add_action( 'admin_notices', [$this, 'admin_notices'] );
   }
   
@@ -112,7 +112,7 @@ class PrivTube_Admin {
     wp_send_json_success($message_object);
   }
   
-  public function video_allow_roles() {
+  public function updateVideo() {
     
     try {
       
@@ -128,9 +128,22 @@ class PrivTube_Admin {
         throw new Exception( 'Video status required' );
       }
       
-      $video_tags = $data->roles;
+      $video_title = $data->title;
+      if (!$video_title) {
+        throw new Exception( 'Video title required' );
+      }
+      
+      $video_description = $data->description;
+      
+      $video_tags = $data->tags;
 
-      $video = $this->google->set_video_properties($video_id, $video_status, $video_tags);
+      $video = $this->google->set_video_properties(
+        $video_id,
+        $video_title,
+        $video_description,
+        $video_status,
+        $video_tags
+      );
       
       $this->ajax_success($video);
       

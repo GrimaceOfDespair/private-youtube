@@ -196,7 +196,7 @@ class PrivTube_Google {
     $this->clear('privtube_videos');    
   }
   
-  public function set_video_properties($video_id, $video_status, $video_tags) {
+  public function set_video_properties($video_id, $video_title, $video_description, $video_status, $video_tags) {
     
     switch ($video_status) {
       case 'unlisted':
@@ -224,6 +224,8 @@ class PrivTube_Google {
     $status->setPrivacyStatus($video_status);
     
     $snippet = $video['snippet'];
+    $snippet->setTitle($video_title);
+    $snippet->setDescription($video_description);
     $snippet->setTags($video_tags);
 
     $updated_video = $youtube->videos->update('status,snippet', $video);

@@ -44,11 +44,13 @@ function onSignInSuccess(authResult) {
   <div class="container" ng-if="loggedIn">
 
     <youtube-upload
-      clientid="661237843986-6jbi54j2p62mip1e5q8gui4k0uboq4ka.apps.googleusercontent.com"
+      clientid="<?= $yt_client_id ?>"
       data-video-title="'Test video'"
       data-video-desc="'Test video description'"
       />
       
   </div>
+  
+  <?php include('video-access.php') ?>
   
 </div>

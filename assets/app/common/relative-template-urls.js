@@ -11,7 +11,7 @@
           // Check is to avoid breaking AngularUI ui-bootstrap-tpls.js: "template/accordion/accordion-group.html"
           if (url.indexOf('calendar') === 0) {
             url = decorateUrl(url, configuration, 'calendar/');
-          } else if (!~url.indexOf('template/')) {
+          } else if (!~url.indexOf('template/') && !~url.indexOf('directives/')) {
             url = decorateUrl(url, configuration);
           }
           return get(url, config);

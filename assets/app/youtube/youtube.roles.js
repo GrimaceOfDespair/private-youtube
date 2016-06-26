@@ -5,10 +5,10 @@
     .module('privtube.admin')
     .controller('RolesController', [
     
-      '$scope', '$modalInstance', 'video', '$http',
-      function($scope, $modalInstance, video, $http) {
+      '$scope', '$modalInstance', 'video', '$http', 'toastr',
+      function($scope, $modalInstance, video, $http, toastr) {
         
-        $scope.status = video.status;
+        $scope.video = video;
         
         $scope.roles = {};
         
@@ -33,19 +33,23 @@
             }
           }
           
+          var video = $scope.video;
+          
           $scope.loading = true;
             
           $http({
             method: 'POST',
             url: configuration.ajaxurl,
             params: {
-              action: 'videoAllowRoles',
+              action: 'updateVideo',
               nonce: configuration.nonce
             },
             data: {
               id: video.id,
-              status: $scope.status,
-              roles: roles
+              status: video.status,
+              title: video.title,
+              description: video.description,
+              tags: roles
             }
           })
           .success(function(response) {
@@ -53,9 +57,8 @@
               video: response.data
             });
           })
-          .error(function() {
-          })
-          .error(function() {
+          .error(function(response) {
+            toastr.error(response.data, 'Error');
             $scope.loading = false;
           });
         };
