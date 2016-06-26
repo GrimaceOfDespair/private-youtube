@@ -164,7 +164,7 @@ class PrivTube_Google {
       'forMine' => true,
       'maxResults' => 50,
     ));
-
+    
     $video_ids = array();
     foreach ($searchResponse['items'] as $video) {
       
@@ -180,8 +180,8 @@ class PrivTube_Google {
     foreach ($listResponse['items'] as $videoDetails) {
       
       $video = $this->create_video($videoDetails);
-      
-      if ( $go_public && $video->status != 'public' ) {
+
+      if ( $go_public && $video['status'] != 'public' ) {
         continue;
       }
       
@@ -254,8 +254,9 @@ class PrivTube_Google {
       publishedAt => mysql2date( get_option('date_format'), $snippet['publishedAt']),
       thumbnail => $snippet['thumbnails']['default']['url'],
       url => 'https://www.youtube.com/watch?v=' . $video_id . '?rel=0',
-      embed => 'https://www.youtube.com/embed/' . $video_id . '?rel=0&showinfo=0',
+      embed => 'https://www.youtube.com/embed/' . $video_id . '?rel=0&showinfo=0&modestbranding=1',
       status => $video['status']['privacyStatus'],
+      uploadStatus => $video['status']['uploadStatus'],
       tags => $snippet['tags']
     );
   }
