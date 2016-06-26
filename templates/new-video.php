@@ -111,3 +111,7 @@ function onSignInSuccess(authResult) {
   </form>
   
 </div>
+
+<form method="post" name="manage_videos" id="manage_videos" action="<?php menu_page_url('privtube-all-videos') ?>">
+  <input type="hidden" name="submit_clear" value="1" />
+</form>

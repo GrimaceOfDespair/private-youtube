@@ -77,20 +77,19 @@
                 toastr.error(message, 'Error');
               }
             },
+            
             onProgress: function (data) {
+              
               $scope.$apply(function() {
                 setProgress(data.loaded, data.total);
               });
+              
             },
             
             onComplete: function (data) {
               
-              $scope.video = {
-                status: 'public'
-              };
-              $scope.progress.busy = false;
+              document.getElementById('manage_videos').submit();
               
-              $location.path(configuration.manageVideosUrl);
             }
           });
           
