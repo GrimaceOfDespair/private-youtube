@@ -3,12 +3,17 @@
   
   angular
     .module('privtube.youtube')
-    .factory('accessToken', [
+    .provider('accessToken', [
     
-      '$window',
-      function accessTokenFactory($window) {
+      function accessTokenProvider() {
         
-        return $window.access_token;
+        this.$get = ['$window', function($window) {
+          return {
+            get: function() {
+              return $window.access_token;
+            }
+          }
+        }];
       }
     ]);
 })();

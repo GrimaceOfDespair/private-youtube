@@ -84,9 +84,10 @@ class PrivTube_Admin {
       'locale' => get_locale(),
       'translations' => $this->get_translations(),
       'templateBaseUrl' => plugin_dir_url( dirname(__file__)) . $templatePath,
+      'manageVideosUrl' => admin_url('upload.php?page=privtube-all-videos'),
       'ajaxurl' => admin_url('admin-ajax.php'),
       'version' => strval(filemtime( $root_path )),
-      'clientId' => $this->google->get_client_id(),
+      'clientId' => $this->google->get_client_id()
     ));
     
     wp_enqueue_script( 'admin_js');

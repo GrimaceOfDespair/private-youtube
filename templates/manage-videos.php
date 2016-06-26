@@ -22,23 +22,42 @@
   <div class='clearfix'></div>
   <br />
   
-  <figure ng-repeat="video in videos | filterByTag:role" class="col-xs-6 col-sm-4 col-md-3">
-    <a href="{{video.url}}" target="_blank">
-      <img ng-src="{{video.thumbnail}}" />
-    </a>
-    <figcaption>
-      <h4>
-        <a ng-click="toggleStatus(video)" class="button"
-          ng-attr-title="{{video.status == 'public' ? '<?= __('Make private', 'privtube') ?>' : '<?= __('Make public', 'privtube') ?>'}}"
-          ><i
-          ng-class="video.status == 'public' ? 'glyphicon-eye-open' : 'glyphicon-eye-close'"
-          class="glyphicon"></i></a>
-        <span ng-bind="video.title"></span>
-      </h4>
-      <h5 ng-bind="video.publishedAt"></h5>
-    </figcaption>
-  </figure>
+  <div class="row" ng-repeat="row in videos | filterByTag:role | chunk:4">
+    <figure ng-repeat="video in row" class="col-md-3">
+      <a href="{{video.url}}" target="_blank">
+        <img ng-src="{{video.thumbnail}}" />
+      </a>
+      <figcaption>
+        <h4>
+          <span ng-bind="video.title"></span>
+        </h4>
+        <h5>
+          <a ng-click="toggleStatus(video)" class="button"
+            ng-attr-title="{{video.status == 'public' ? '<?= __('Make private', 'privtube') ?>' : '<?= __('Make public', 'privtube') ?>'}}"
+            ><i
+            ng-class="video.status == 'public' ? 'glyphicon-eye-open' : 'glyphicon-eye-close'"
+            class="glyphicon"></i></a>
+          <span ng-bind="video.publishedAt"></span>
+        </h5>
+      </figcaption>
+    </figure>
+  </div>
   
-  <?php include('video-edit.php') ?>
+  <script type="text/ng-template" id="template/video-properties.html">
+    <div class="modal-header">
+      <h3 class="modal-title"><?= __('Video data') ?></h3>
+    </div>
+    <div class="modal-body">
+      <?php include('video-edit.php') ?>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary has-spinner" type="button" ng-click="ok()" ng-class="{'active':loading}">
+        OK <span class="spinner"></span>
+      </button>
+      <button class="btn btn-warning" type="button" ng-click="cancel()" ng-disabled="loading">
+        Cancel
+      </button>
+    </div>
+  </script>
 </div>
 

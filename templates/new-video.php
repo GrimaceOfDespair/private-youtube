@@ -20,7 +20,11 @@ function onSignInSuccess(authResult) {
   });
 }
 </script>
-<div id="privtube-admin" ng-app="privtube.admin" ng-controller="UploadVideosController">
+<div
+  id="privtube-admin"
+  ng-cloak
+  ng-app="privtube.admin"
+  ng-controller="UploadVideosController">
 
   <toaster-container></toaster-container>
   
@@ -41,7 +45,9 @@ function onSignInSuccess(authResult) {
     </span>
   </div>
   
-  <div class="container" ng-if="loggedIn">
+  <form name="uploadForm" class="container"
+    ng-if="loggedIn"
+    >
 
     <div class="row">
       <div class ='col-md-12'>
@@ -57,30 +63,37 @@ function onSignInSuccess(authResult) {
         <div ngf-no-file-drop><?= __('File Drag/drop is not supported', 'privtube') ?></div>
       </div>
     </div>
-
-    <div class="btn-group-vertical">
-      <div class="input-group">
+    
+    <fieldset class="form-group">
+      <label for="video-file"><?= __('File', 'privtube') ?></label>
+      <div id="video-file" class="input-group">
         <span class="input-group-btn">
           <span class="btn btn-primary btn-file" >
             <span class="glyphicon glyphicon-folder-open"></span>
             <?= __('Browse', 'privtube') ?>
             <input type="file" id="file" class="file" accept="video/*"
-              fileread ng-model="video.file" />
+              fileread ng-model="video.file" required />
           </span>
         </span>
-        <input type="text" name="videoName" class="form-control" readonly value="{{video.file.name}}" />
+        <input type="text" name="videoName" class="form-control" readonly value="{{video.filename}}" />
       </div>
-      <button type="button" id="uploadButton" class="btn btn-success"
-        ng-disabled="video == null || uploading"
-        ng-click="upload()"
-        ><span class="glyphicon glyphicon-upload"></span> <?= __('Upload video', 'privtube') ?></button>
-    </div>
+    </fieldset>
+    
+    <?php include('video-edit.php') ?>
 
-    <div ng-if="uploading">
+    <fieldset class="form-group">
+      <button type="button" id="uploadButton" class="btn btn-success"
+        ng-disabled="uploadForm.$invalid || progress.busy"
+        ng-click="uploadVideo()">
+        <span class="glyphicon glyphicon-upload"></span> <?= __('Upload video', 'privtube') ?>
+      </button>
+    </fieldset>
+
+    <div ng-if="progress.busy">
       <div class="progress">
-        <div id="transferred" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{video.uploadProgress}}"
-             aria-valuemin="0" aria-valuemax="100" style="width:{{video.uploadProgress}}%">
-            {{uploadProgressText}}
+        <div id="transferred" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{progress.progress}}"
+             aria-valuemin="0" aria-valuemax="100" style="width:{{progress.progress}}%">
+            {{progress.description}}
         </div>
       </div>
 
@@ -95,8 +108,6 @@ function onSignInSuccess(authResult) {
       </small>
     </p>
       
-  </div>
-  
-  <?php include('video-edit.php') ?>
+  </form>
   
 </div>
