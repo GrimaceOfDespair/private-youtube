@@ -71,8 +71,12 @@
     <div class="clearfix"></div>
     <br />
     <div class="modal-footer">
-      <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
-      <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+      <button class="btn btn-primary has-spinner" type="button" ng-click="ok()" ng-class="{'active':loading}">
+        OK <span class="spinner"></span>
+      </button>
+      <button class="btn btn-warning" type="button" ng-click="cancel()" ng-disabled="loading">
+        Cancel
+      </button>
     </div>
   </script>
   

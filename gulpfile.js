@@ -139,7 +139,11 @@ var jsTasks = function(filename) {
     .pipe(function() {
       return gulpif(function(file) {
         return !/bower_components/.test(file.path);
-      }, embedTemplates({ basePath: 'assets/app' }));
+      }, embedTemplates({
+        basePath: 'assets/app',
+        skipTemplates: /allowRoles\.html/,
+        skipErrors: true
+      }));
     })
     .pipe(concat, filename)
     .pipe(uglify, {

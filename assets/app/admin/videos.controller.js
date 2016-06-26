@@ -41,44 +41,10 @@
           });
 
           modalInstance.result.then(function (result) {
-
-            $http({
-              method: 'POST',
-              url: configuration.ajaxurl,
-              params: {
-                action: 'videoAllowRoles',
-                nonce: configuration.nonce
-              },
-              data: {
-                id: video.id,
-                status: result.status,
-                roles: result.roles,
-              },
-            })
-            .success(function(response) {
-              video.status = response.data.status;
-              video.tags = response.data.tags;
-            });
+            video.status = result.video.status;
+            video.tags = result.video.tags;
           });
-          
-          /*
-          $http({
-            method: 'POST',
-            url: configuration.ajaxurl,
-            params: {
-              action: 'setVideoStatus',
-              nonce: configuration.nonce
-            },
-            data: {
-              id: video.id,
-              status: (video.status == 'public' ? 'unlisted' : 'public'), 
-            },
-          })
-          .success(function(response) {
-            video.status = response.data.status;
-          });
-          */
-        }
+        };
       }
     ]);
 })();
