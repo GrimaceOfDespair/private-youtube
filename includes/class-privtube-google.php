@@ -5,6 +5,7 @@
  * @package    BitHive
  * @author     Igor Kalders <igor@bithive.be>
  */
+ 
 class PrivTube_Google {
   
   protected $yt_client_id = '';
@@ -23,7 +24,6 @@ class PrivTube_Google {
       $this->yt_client_secret = $options['client_secret'];
     }
     
-    add_action( 'wp_enqueue_scripts', [$this, 'enqueue_scripts'] );
     add_action( 'wp_print_scripts', [$this, 'google_signin'] );
   }  
   
@@ -85,11 +85,6 @@ class PrivTube_Google {
     
   }
 
-  public function enqueue_scripts() {
-    wp_register_script( 'youtube-api', 'https://apis.google.com/js/client:plusone.js?onload=onLoadPlus', null, null, false );
-    wp_enqueue_script( 'youtube-api');
-  }
-  
   public function get_auth_url() {
     
     $client = $this->get_google_client();

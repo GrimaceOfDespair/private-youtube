@@ -20,12 +20,9 @@ function onSignInSuccess(authResult) {
   });
 }
 </script>
-<div id="privtube-admin" ng-app="privtube.admin">
+<div id="privtube-admin" ng-app="privtube.admin" ng-controller="VideosController">
 
   <toaster-container></toaster-container>
-  
-  <h2><?php echo __('YouTube Videos', 'privtube') ?>
-  </h2>
   
   <div id="login" class="container" ng-hide="loggedIn">
     <span class="g-signin2"
@@ -46,15 +43,12 @@ function onSignInSuccess(authResult) {
   
   <div class="container" ng-if="loggedIn">
 
-    <ul class="nav nav-tabs">
-      <li role="presentation" ui-sref-active="active" ><a ui-sref="manage-videos">Manage</a></li>
-      <li role="presentation" ui-sref-active="active" ><a ui-sref="upload-video">Upload</a></li>
-    </ul> 
-
-    <div class="row">
-        <div ui-view="main"></div>
-    </div>
-    
+    <youtube-upload
+      clientid="661237843986-6jbi54j2p62mip1e5q8gui4k0uboq4ka.apps.googleusercontent.com"
+      data-video-title="'Test video'"
+      data-video-desc="'Test video description'"
+      />
+      
   </div>
   
 </div>

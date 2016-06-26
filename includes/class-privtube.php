@@ -70,7 +70,7 @@ class PrivTube {
 
     $this->loader = new PrivTube_Loader();
   }
-
+  
   private function define_common_hooks() {
     
     $this->google = new PrivTube_Google();

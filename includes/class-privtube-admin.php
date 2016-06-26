@@ -96,6 +96,13 @@ class PrivTube_Admin {
     wp_enqueue_script( 'angular-locale');
   }
   
+  public function google_youtube_api() {
+
+    wp_register_script( 'youtube-api', 'https://apis.google.com/js/client:plusone.js', null, null, false );
+    wp_enqueue_script( 'youtube-api');
+    
+  }
+  
   public function ajax_error($message_object) {
     status_header( 500 );
     wp_send_json_error($message_object);
@@ -164,6 +171,8 @@ class PrivTube_Admin {
       add_action( 'load-' . $admin_page, array( $this, 'enqueue_styles' ) );
       add_action( 'load-' . $admin_page, array( $this, 'handle_actions' ) );
     }
+    
+    add_action( 'load-media_page_privtube-new-video', [$this, 'google_youtube_api'] );
   }
   
   public function handle_actions() {
