@@ -29,7 +29,6 @@
             error: 50
           };
 
-          $scope.loggedIn = false;
           $scope.uploading = false;
           $scope.uploadProgressText = '';
           $scope.video = {

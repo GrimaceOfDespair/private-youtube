@@ -20,7 +20,7 @@ function onSignInSuccess(authResult) {
   });
 }
 </script>
-<div id="privtube-admin" ng-app="privtube.admin" ng-controller="VideosController">
+<div id="privtube-admin" ng-app="privtube.admin" ng-controller="UploadVideosController">
 
   <toaster-container></toaster-container>
   
@@ -43,14 +43,60 @@ function onSignInSuccess(authResult) {
   
   <div class="container" ng-if="loggedIn">
 
-    <youtube-upload
-      clientid="<?= $yt_client_id ?>"
-      data-video-title="'Test video'"
-      data-video-desc="'Test video description'"
-      />
+    <div class="row">
+      <div class ='col-md-12'>
+        <div class="form-group drop-box""
+             ngf-drop
+             ng-model="videoFiles"
+             ngf-accept="'video/*'"
+             ngf-drag-over-class="dragover"
+             ngf-multiple="false"
+                >
+            <p><?= __('Choose a video from your computer', 'privtube') ?>: .MOV, .MPEG4, MP4, .AVI, .WMV, .MPEGPS, .FLV, 3GPP, WebM</p>
+        </div>
+        <div ngf-no-file-drop><?= __('File Drag/drop is not supported', 'privtube') ?></div>
+      </div>
+    </div>
+
+    <div class="btn-group-vertical">
+      <div class="input-group">
+        <span class="input-group-btn">
+          <span class="btn btn-primary btn-file" >
+            <span class="glyphicon glyphicon-folder-open"></span>
+            <?= __('Browse', 'privtube') ?>
+            <input type="file" id="file" class="file" accept="video/*"
+              fileread ng-model="video.file" />
+          </span>
+        </span>
+        <input type="text" name="videoName" class="form-control" readonly value="{{video.file.name}}" />
+      </div>
+      <button type="button" id="uploadButton" class="btn btn-success"
+        ng-disabled="video == null || uploading"
+        ng-click="upload()"
+        ><span class="glyphicon glyphicon-upload"></span> <?= __('Upload video', 'privtube') ?></button>
+    </div>
+
+    <div ng-if="uploading">
+      <div class="progress">
+        <div id="transferred" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{video.uploadProgress}}"
+             aria-valuemin="0" aria-valuemax="100" style="width:{{video.uploadProgress}}%">
+            {{uploadProgressText}}
+        </div>
+      </div>
+
+      <div align="center" class="embed-responsive embed-responsive-16by9">
+        <video controls ngf-src="video.file" ngf-accept="'video/*'"></video>
+      </div>
+    </div>
+
+    <p>
+      <small id="disclaimer">*
+        <?= sprintf(__('By uploading a video, you certify that you own all rights to the content or that you are authorized by the owner to make the content publicly available on YouTube, and that it otherwise complies with the YouTube Terms of Service located at <a href="%s" target="_blank">%s</a>', 'privtube'), 'http://www.youtube.com/t/terms', 'http://www.youtube.com/t/terms') ?>
+      </small>
+    </p>
       
   </div>
   
-  <?php include('video-access.php') ?>
+  <?php include('video-edit.php') ?>
   
 </div>

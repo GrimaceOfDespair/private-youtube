@@ -4,7 +4,7 @@
     $role_names []= $role_name;
   }
 ?>
-<div class="row" ng-app="privtube.admin" ng-controller="VideosController">
+<div class="row" ng-app="privtube.admin" ng-controller="ManageVideosController">
   
   <div class="col-md-8">
     <form method="post" action="<?php menu_page_url('privtube-all-videos') ?>" role="form">

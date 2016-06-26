@@ -3,7 +3,7 @@
   
   angular
     .module('privtube.admin')
-    .controller('VideosController', [
+    .controller('ManageVideosController', [
     
       '$scope', '$http', '$q', '$uibModal', 'configuration',
       function($scope, $http, $q, $uibModal, configuration) {
