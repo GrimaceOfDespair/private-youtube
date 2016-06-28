@@ -12,7 +12,7 @@
             get: function() {
               return $window.access_token;
             }
-          }
+          };
         }];
       }
     ]);

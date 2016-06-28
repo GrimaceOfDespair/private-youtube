@@ -10,7 +10,7 @@
         
         $scope.video = {
           status: 'public'
-        }
+        };
         
         $scope.roles = {};
         
@@ -19,7 +19,7 @@
           progress: 0,
           description: '',
           remainingSeconds: 0,
-        }
+        };
         
         $scope.$watch('video.file', function (file) {
           if (file) {
@@ -95,7 +95,7 @@
           
           setProgress(0, $scope.video.filesize);
           uploader.upload();
-        }
+        };
         
         function setProgress(bytesUploaded, totalBytes) {
           
