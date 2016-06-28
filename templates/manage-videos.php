@@ -33,7 +33,7 @@
         </h4>
         <h5>
           <a ng-click="toggleStatus(video)" class="button"
-            ng-attr-title="{{video.status == 'public' ? '<?= __('Make private', 'privtube') ?>' : '<?= __('Make public', 'privtube') ?>'}}"
+            ng-attr-title="{{video.status == 'public' ? '<?= esc_attr__('Make private', 'privtube') ?>' : '<?= esc_attr__('Make public', 'privtube') ?>'}}"
             ><i
             ng-class="video.status == 'public' ? 'glyphicon-eye-open' : 'glyphicon-eye-close'"
             class="glyphicon"></i></a>
@@ -51,8 +51,13 @@
       <?php include('video-edit.php') ?>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary has-spinner" type="button" ng-click="ok()" ng-class="{'active':loading}">
-        OK <span class="spinner"></span>
+      <button class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="loading"  ng-class="{'active':loading}">
+        OK
+        <div class="spinner">
+          <div class="bounce1"></div>
+          <div class="bounce2"></div>
+          <div class="bounce3"></div>
+        </div>
       </button>
       <button class="btn btn-warning" type="button" ng-click="cancel()" ng-disabled="loading">
         Cancel
