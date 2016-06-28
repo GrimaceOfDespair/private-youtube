@@ -83,6 +83,8 @@ function onSignInSuccess(authResult) {
 
     <fieldset class="form-group">
       <button type="button" id="uploadButton" class="btn btn-success"
+        spinner
+        ng-class="{'active':progress.busy}"
         ng-disabled="uploadForm.$invalid || progress.busy"
         ng-click="uploadVideo()">
         <span class="glyphicon glyphicon-upload"></span> <?= __('Upload video', 'privtube') ?>

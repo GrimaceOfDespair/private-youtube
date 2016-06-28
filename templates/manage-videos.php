@@ -51,13 +51,8 @@
       <?php include('video-edit.php') ?>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="loading"  ng-class="{'active':loading}">
+      <button spinner ng-class="{'active':loading}" class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="loading">
         OK
-        <div class="spinner">
-          <div class="bounce1"></div>
-          <div class="bounce2"></div>
-          <div class="bounce3"></div>
-        </div>
       </button>
       <button class="btn btn-warning" type="button" ng-click="cancel()" ng-disabled="loading">
         Cancel
