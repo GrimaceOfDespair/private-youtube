@@ -132,31 +132,40 @@ class PrivTube_Google {
     }  
   }
 
-  public function list_videos( $check_roles, $user_roles = array() ) {
+  public function list_videos( $user_roles = null ) {
     
-    $cache_key = 'privtube_videos_' . $check_roles . '_' . implode( ',', $user_roles);
+    if (is_null($user_roles)) {
+      $cache_key = 'privtube_videos_all';
+    } else if (count($user_roles) == 0) {
+      $cache_key = 'privtube_videos_public';
+    } else {
+      $cache_key = 'privtube_videos_' . $user_roles;
+    }
+    
     $videos = get_transient($cache_key);
     
     if ($videos) {
-      
       return $videos;
-      
     }
     
-    $videos = $this->list_private_videos( $check_roles, $user_roles );
+    $videos = $this->list_private_videos( $user_roles );
     
     set_transient($cache_key, $videos, 60 * 60);
     
     return $videos;
   }
     
-  private function list_private_videos( $check_roles, $user_roles ) {
+  private function list_private_videos( $user_roles ) {
     
     // Call the channels.list method to retrieve information about the
     // currently authenticated user's channel.
     $youtube = $this->create_youtube_client();
     
-    $query = $check_roles ? '##' . implode(' ##', $user_roles) : '';
+    if ($user_roles == null) {
+      $query = '';
+    } else {
+      $query = '##' . $user_roles;
+    }
     
     $searchResponse = $youtube->search->listSearch('id,snippet', array(
       'type' => 'video',
@@ -175,13 +184,13 @@ class PrivTube_Google {
       'maxResults' => 50
     ));
 
-    $go_public = $check_roles && count($user_roles) == 0;
+    $public = !is_null($user_roles) && count($user_roles) == 0;
     
     foreach ($listResponse['items'] as $videoDetails) {
       
       $video = $this->create_video($videoDetails);
 
-      if ( $go_public && $video['status'] != 'public' ) {
+      if ( $public && $video['status'] != 'public' ) {
         continue;
       }
       

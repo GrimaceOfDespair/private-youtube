@@ -77,7 +77,7 @@ class PrivTube {
     
     $this->loader->add_action( 'plugins_loaded', $this, 'load_text_domain' );
     $this->loader->add_action( 'activated_plugin', $this, 'fix_plugin_dependencies' );
-    $this->loader->add_action( 'wp_router_generate_routes', $this, 'add_video_routes' );
+    add_shortcode( 'privtube', [$this, 'privtube_shortcode'] );
   }
 
   private function define_admin_hooks() {
@@ -104,32 +104,30 @@ class PrivTube {
     return $assets;
   }
   
-  public function add_video_routes($router) {
+  public function privtube_shortcode($atts) {
     
-    $route_args = array(
-      'path' => '^videos',
-      'query_vars' => array( ),
-      'page_callback' => [ $this, 'videos' ],
-      'page_arguments' => array( ),
-      'access_callback' => true
-    );
-
-    $router->add_route( 'videos', $route_args );
-  }
+    extract( shortcode_atts( array( 'roles' => null ), $atts ) );
+    
+    if ( is_null($roles) ) {
+      $roles = wp_get_current_user()->roles;
+    }
   
-  public function videos() {
+    $videos = $this->google->list_videos( $roles );
     
-    $user = wp_get_current_user();
-    
-    $videos = $this->google->list_videos( true, $user->roles );
+    ob_start();
     ?>
-    <h2><?php echo __('Videos', 'privtube') ?></h2>
     <div class="container">
       <?php
         include( dirname(dirname( __FILE__ )) . '/templates/videos.php' );
       ?>
     </div>
     <?php
+    
+    $result = ob_get_contents();
+    
+    ob_end_clean();
+    
+    return $result;
   }
 
   public function fix_plugin_dependencies() {

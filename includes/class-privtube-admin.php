@@ -163,7 +163,7 @@ class PrivTube_Admin {
       }
       
       $this->ajax_success(array(
-        videos => $this->google->list_videos( false ),
+        videos => $this->google->list_videos(),
       ));
       
     } catch (Exception $e) {
@@ -174,7 +174,7 @@ class PrivTube_Admin {
   
   public function menu() {
     global $submenu;
-    
+
     $admin_pages = array(
       add_media_page( $this->__('All videos', 'privtube'), $this->__('All videos', 'privtube'), 'manage_videos', 'privtube-all-videos', [&$this, 'manage_videos']),
       add_media_page( $this->__('New video', 'privtube'), $this->__('New video', 'privtube'), 'manage_videos', 'privtube-new-video', [&$this, 'new_video']),
