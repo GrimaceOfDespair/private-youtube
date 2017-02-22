@@ -139,7 +139,7 @@ class PrivTube_Google {
     } else if (count($user_roles) == 0) {
       $cache_key = 'privtube_videos_public';
     } else {
-      $cache_key = 'privtube_videos_' . $user_roles;
+      $cache_key = 'privtube_videos_' . implode('_', $user_roles);
     }
     
     $videos = get_transient($cache_key);
@@ -161,10 +161,15 @@ class PrivTube_Google {
     // currently authenticated user's channel.
     $youtube = $this->create_youtube_client();
     
-    if ($user_roles == null) {
-      $query = '';
-    } else {
-      $query = '##' . $user_roles;
+    $query = '';
+    if ($user_roles != null) {
+
+      foreach ($user_roles as $user_role) {
+        if ($query != '') {
+          $query .= ' OR ';
+        }
+        $query .= '##' . $user_role;
+      }
     }
     
     $searchResponse = $youtube->search->listSearch('id,snippet', array(
@@ -185,6 +190,8 @@ class PrivTube_Google {
     ));
 
     $public = !is_null($user_roles) && count($user_roles) == 0;
+    
+    $videos = array();
     
     foreach ($listResponse['items'] as $videoDetails) {
       
@@ -257,16 +264,16 @@ class PrivTube_Google {
     $video_id = $video['id'];
 
     return array(
-      id => $video_id,
-      title => $snippet['title'],
-      description => $snippet['description'],
-      publishedAt => mysql2date( get_option('date_format'), $snippet['publishedAt']),
-      thumbnail => $snippet['thumbnails']['default']['url'],
-      url => 'https://www.youtube.com/watch?v=' . $video_id . '?rel=0',
-      embed => 'https://www.youtube.com/embed/' . $video_id . '?rel=0&showinfo=0&modestbranding=1',
-      status => $video['status']['privacyStatus'],
-      uploadStatus => $video['status']['uploadStatus'],
-      tags => $snippet['tags']
+      'id' => $video_id,
+      'title' => $snippet['title'],
+      'description' => $snippet['description'],
+      'publishedAt' => mysql2date( get_option('date_format'), $snippet['publishedAt']),
+      'thumbnail' => $snippet['thumbnails']['default']['url'],
+      'url' => 'https://www.youtube.com/watch?v=' . $video_id . '?rel=0',
+      'embed' => 'https://www.youtube.com/embed/' . $video_id . '?rel=0&showinfo=0&modestbranding=1',
+      'status' => $video['status']['privacyStatus'],
+      'uploadStatus' => $video['status']['uploadStatus'],
+      'tags' => $snippet['tags']
     );
   }
 
