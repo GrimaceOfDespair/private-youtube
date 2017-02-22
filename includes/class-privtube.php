@@ -110,6 +110,10 @@ class PrivTube {
     
     if ( is_null($roles) ) {
       $roles = wp_get_current_user()->roles;
+    } else if ($roles == '') {
+      $roles = array();
+    } else {
+      $roles = explode(',', $roles);
     }
   
     $videos = $this->google->list_videos( $roles );
@@ -117,6 +121,7 @@ class PrivTube {
     ob_start();
     ?>
     <div class="container">
+    
       <?php
         include( dirname(dirname( __FILE__ )) . '/templates/videos.php' );
       ?>
