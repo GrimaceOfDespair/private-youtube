@@ -7,7 +7,7 @@
 <script>
 function onSignInSuccess(authResult) {
 
-  window.access_token = authResult.hg.access_token;
+  window.access_token = authResult.Zi.access_token;
   
   // Warning: ugly hack ahead  
   var scope = angular
