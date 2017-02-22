@@ -15,7 +15,7 @@
       <input type="radio" name="access" id="public" autocomplete="off" ng-checked="video.status=='public'">
       <?= __('Everyone', 'privtube') ?>
     </label>
-    <label ng-click="video.status = 'private'" ng-class="{'active':video.status!='public'}" class="btn btn-primary">
+    <label ng-click="video.status = 'unlisted'" ng-class="{'active':video.status!='public'}" class="btn btn-primary">
       <input type="radio" name="access" id="unlisted" autocomplete="off" ng-checked="video.status!='public'">
       <?= __('Private', 'privtube') ?>
     </label>
