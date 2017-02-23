@@ -86,7 +86,7 @@ class PrivTube {
     
     $plugin_options = new PrivTube_Options( $this );
     
-    $this->loader->add_action( 'rest_api_init', $plugin_public, 'enable_privtube' );
+    //$this->loader->add_action( 'rest_api_init', $plugin_public, 'enable_privtube' );
     
   }
   
