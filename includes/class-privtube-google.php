@@ -73,7 +73,7 @@ class PrivTube_Google {
   
   public function clear_token($types) {
     
-    foreach (split(',', $types) as $type) {
+    foreach (explode(',', $types) as $type) {
       delete_transient('privtube_' . $type . '_token');
     }
     
