@@ -65,12 +65,9 @@ class PrivTube_Admin {
     foreach ($paths->dependencies as $path) {
       $handle = $path->path;
       
-      if (preg_match('/[\\\\\/]jquery\.js$/', $handle)) {
-        $handle = 'jquery';
-        wp_deregister_script($handle);
+      if (!preg_match('/[\\\\\/]jquery\.js$/', $handle)) {
+        wp_enqueue_script( $handle, $path->url, null, '' . $path->version );
       }
-      
-      wp_enqueue_script( $handle, $path->url, null, '' . $path->version );
     }
     
     $root = $paths->root;
@@ -163,7 +160,7 @@ class PrivTube_Admin {
       }
       
       $this->ajax_success(array(
-        videos => $this->google->list_videos(),
+        'videos' => $this->google->list_videos(),
       ));
       
     } catch (Exception $e) {
@@ -191,13 +188,13 @@ class PrivTube_Admin {
   
   public function handle_actions() {
     
-    if ($_POST['submit_clear']) {
+    if (isset($_POST['submit_clear'])) {
 
       $this->google->clear_videocache();
       
       $this->notices []= array(
-        type => 'updated',
-        message => __('Cache was cleared', 'privtube')
+        'type' => 'updated',
+        'message' => __('Cache was cleared', 'privtube')
       );
     }
   }
