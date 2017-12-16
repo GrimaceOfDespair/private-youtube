@@ -7,7 +7,7 @@ machine:
 
   # This will be added to the `/etc/hosts` file
   hosts:
-    private-youtube-plugin.dev: 127.0.0.1
+    private-youtube.dev: 127.0.0.1
 
 dependencies:
   pre:
