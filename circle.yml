@@ -21,16 +21,16 @@ dependencies:
     - chmod +x wp-cli.phar
 
     # Download WordPress into `wordpress` directory
-    - ./wp-cli.phar core download --allow-root --path=wordpress
+    - ./wp-cli.phar core download --allow-root --path=../wordpress
 
     # Generate `wp-config.php` file
-    - ./wp-cli.phar core config --allow-root --dbname=wordpress --dbuser=ubuntu --dbhost=localhost --path=wordpress
+    - ./wp-cli.phar core config --allow-root --dbname=wordpress --dbuser=ubuntu --dbhost=private-youtube.dev --path=../wordpress
 
     # Install WordPress
-    - ./wp-cli.phar core install --allow-root --admin_name=admin --admin_password=admin --admin_email=admin@example.com --url=http://private-youtube.dev:8080 --title=WordPress --path=wordpress
+    - ./wp-cli.phar core install --allow-root --admin_name=admin --admin_password=admin --admin_email=admin@example.com --url=http://private-youtube.dev:8080 --title=WordPress --path=../wordpress
 
     # Clone Private Youtube plugin from GitHub
-    - git clone git@github.com:GrimaceOfDespair/private-youtube.git wordpress/wp-content/plugins/private-youtube
+    - ln -s private-youtube wordpress/wp-content/plugins/private-youtube
 
     # And use WP-CLI to activate it
     - ./wp-cli.phar plugin activate privtube --path=wordpress
