@@ -2,9 +2,14 @@
   "name": "private-youtube",
   "version": "1.0.0",
   "description": "Private YouTube",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/GrimaceOfDespair/private-youtube.git"
+  },
   "main": "index.js",
   "scripts": {
     "build": "bower install && gulp",
+    "dist": "bower install && gulp --production",
     "jshint": "gulp jshint",
     "jscs": "jscs gulpfile.js assets/scripts/*.js"
   },

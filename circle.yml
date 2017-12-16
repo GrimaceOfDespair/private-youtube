@@ -10,6 +10,12 @@ machine:
     private-youtube.dev: 127.0.0.1
 
 dependencies:
+
+  override:
+    - composer install
+    - npm install
+    - npm run dist
+
   pre:
     # No password is required for the MySQL user `ubuntu`
     - mysql -u ubuntu -e "create database wordpress"
@@ -29,19 +35,13 @@ dependencies:
     # Install WordPress
     - ./wp-cli.phar core install --allow-root --admin_name=admin --admin_password=admin --admin_email=admin@example.com --url=http://private-youtube.dev:8080 --title=WordPress --path=../wordpress
 
+  post:
     # Clone Private Youtube plugin from GitHub
     - ln -s /home/ubuntu/private-youtube /home/ubuntu/wordpress/wp-content/plugins/private-youtube
-
-    # Run composer
-    - composer install
-
-    # Run bower
-    - bower install
 
     # And use WP-CLI to activate it
     - ./wp-cli.phar plugin activate private-youtube --path=../wordpress
 
-  post:
     # Copy Apache conf into `site-available`
     - cp ~/private-youtube/apache-ci.conf /etc/apache2/sites-available
 
