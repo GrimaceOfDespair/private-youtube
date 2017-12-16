@@ -30,10 +30,16 @@ dependencies:
     - ./wp-cli.phar core install --allow-root --admin_name=admin --admin_password=admin --admin_email=admin@example.com --url=http://private-youtube.dev:8080 --title=WordPress --path=../wordpress
 
     # Clone Private Youtube plugin from GitHub
-    - ln -s private-youtube ../wordpress/wp-content/plugins/private-youtube
+    - ln -s /home/ubuntu/private-youtube /home/ubuntu/wordpress/wp-content/plugins/private-youtube
+
+    # Run composer
+    - composer install
+
+    # Run bower
+    - bower install
 
     # And use WP-CLI to activate it
-    - ./wp-cli.phar plugin activate privtube --path=../wordpress
+    - ./wp-cli.phar plugin activate private-youtube --path=../wordpress
 
   post:
     # Copy Apache conf into `site-available`
