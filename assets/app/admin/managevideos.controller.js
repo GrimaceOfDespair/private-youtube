@@ -20,14 +20,14 @@
 
 (function () {
   'use strict';
-  
+
   angular
     .module('privtube.admin')
     .controller('ManageVideosController', [
-    
+
       '$scope', '$http', '$q', '$uibModal', 'configuration',
       function($scope, $http, $q, $uibModal, configuration) {
-        
+
         $http({
           method: 'POST',
           url: configuration.ajaxurl,
@@ -39,11 +39,11 @@
         .success(function(response) {
           $scope.videos = response.data.videos;
         });
-        
+
         $scope.toggleStatus = function(video) {
-          
+
           var modalInstance = $uibModal.open({
-            templateUrl: 'template/video-properties.html',
+            templateUrl: /*!*/ 'template/video-properties.html',
             controller: 'VideoPropertiesController',
             resolve: {
               video: function() {
