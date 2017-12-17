@@ -1,0 +1,9 @@
+/node_modules
+/bower_components
+/assets
+/*.conf
+/*.txt
+/*.json
+/*.md
+/*.lock
+/*.js
