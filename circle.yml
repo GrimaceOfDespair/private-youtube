@@ -22,9 +22,7 @@ dependencies:
     - npm run dist
 
   post:
-    - cp *.php $CIRCLE_ARTIFACTS
-
-    - rsync -av --progress --exclude-from exclude.txt ./ $CIRCLE_ARTIFACTS
+    - zip -r $CIRCLE_ARTIFACTS/private-youtube.zip . -x *git.* node_modules bower_components assets
 
 test:
   override:
