@@ -24,6 +24,17 @@ dependencies:
   post:
     - zip -r $CIRCLE_ARTIFACTS/private-youtube.zip . -x ".git/*" "node_modules/*" "bower_components/*" "assets/*" "features/*" "images/*" "*.json" "*.yml" "*.conf" "*.js" "*.lock"
 
+deployment:
+  release:
+    tag: /(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)/
+    commands:
+
+      # Download GitHub Release
+      - go get github.com/tcnksm/ghr
+
+      # Create Release
+      - ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` $CIRCLE_ARTIFACTS/
+
 test:
   override:
 
